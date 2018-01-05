@@ -7,16 +7,15 @@ try{
 	$res = $update_query->execute();
 
 	if($res){
-		echo "hi";
-	}else{
-		echo "\nPDO::errorInfo():\n";
+		echo "updated successful";
+	} 
+	else{
 		print_r($update_query->errorInfo());
 	}
+	$db = null;
 
 }catch(PDOException $e) {
     echo $e->getMessage();
 }
-
-	// "UPDATE Downloads SET quantity = quantity + 1 WHERE bookId = 1; "
 
 ?>

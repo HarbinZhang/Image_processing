@@ -2,14 +2,14 @@
 try{
 
 
-	// $db  = new SQLite3('databases/test.db');
-	$db = new SQLite3('analytics.sqlite', SQLITE3_OPEN_CREATE | SQLITE3_OPEN_READWRITE);
-	// $db->query('CREATE TABLE IF NOT EXISTS "visits" (
-	//     "id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-	//     "user_id" INTEGER,
-	//     "url" VARCHAR,
-	//     "time" DATETIME
-	// )');
+	$db  = new SQLite3('databases/test.db');
+	// $db = new SQLite3('analytics.sqlite', SQLITE3_OPEN_CREATE | SQLITE3_OPEN_READWRITE);
+	$db->query('CREATE TABLE IF NOT EXISTS "visits" (
+	    "id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+	    "user_id" INTEGER,
+	    "url" VARCHAR,
+	    "time" DATETIME
+	)');
 	// $results = $db->query('UPDATE Downloads SET quantity = quantity + 1 WHERE bookId = 3');
 
 
@@ -47,9 +47,11 @@ try{
 	// $count = $file_db->exec("DELETE * FROM Downloads WHERE bookId = 1");
 	// $count = $file_db->query("SELECT * FROM Downloads WHERE bookId = 1");
 	// print("Deleted $count rows.\n");
-
+	echo"good";
+	
 }catch(PDOException $e) {
     echo $e->getMessage();
+    echo "bad";
 }
 ?>
 
