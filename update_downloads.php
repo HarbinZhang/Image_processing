@@ -1,16 +1,22 @@
 <?php
 
-	$servername = "localhost";
-	$username = "root";
-	$password = "root";
-	$dbname = "test";
+try{
+	$db = new PDO('sqlite:databases/test.db');
+	$update_query = $db->prepare("UPDATE Downloads SET quantity = quantity + 1 WHERE bookId = :bookId");
+	$update_query->bindValue(':bookId',$_REQUEST['bookId']);
+	$res = $update_query->execute();
 
+	if($res){
+		echo "hi";
+	}else{
+		echo "\nPDO::errorInfo():\n";
+		print_r($update_query->errorInfo());
+	}
 
-	$db = mysqli_connect('localhost','root','root','test') 
-		or die('Error connecting to MySQL server.');
+}catch(PDOException $e) {
+    echo $e->getMessage();
+}
 
 	// "UPDATE Downloads SET quantity = quantity + 1 WHERE bookId = 1; "
-	$update_query = "UPDATE Downloads SET quantity = quantity + 1 WHERE bookId = ".$_REQUEST['bookId'].";";
-	mysqli_query($db, $update_query) or die('Error querying database.');
-	echo "update successful";	
+
 ?>
