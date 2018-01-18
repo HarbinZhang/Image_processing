@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script type="text/javascript" language="javascript" src="//code.jquery.com/jquery-1.12.4.js"></script>
+	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.16/datatables.min.css"/>
+ 	<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.16/datatables.min.js"></script>
+
+    <script type="text/javascript">
+
+
+
+        $("document").ready(function(){
+            $.ajax({
+                type: "POST",
+                url:"../get_downloads.php",
+                data:{"data":"all"},
+                success: function(data){
+                    var str = $.parseJSON(data);
+                    var obj = $.parseJSON(str);
+                    // alert( "Data returned: " + obj );
+                    $('#table_id').DataTable( {
+                        "columnDefs": 
+                            [{"className": "dt-center", "targets": "_all"}],                        
+                        data: obj
+                    });                    
+                }
+            });
+        });
+    </script>
+
+    <script type="text/javascript">
+        function bookAdd(){
+            var bookName = document.getElementById('bookName_id').value;
+            var author = document.getElementById('author_id').value;
+
+            if(bookName.length == 0){alert("Fill out the book name, please."); return;}
+            if(author.length == 0){alert("Fill out the author name, please."); return;}
+
+            $.ajax({
+                type: "POST",
+                url: "../modify_book.php",
+                data: { action:"add", bookName:bookName, author:author },
+                success:function( msg ) {
+                    console.log(typeof(msg));
+                    console.log(msg);
+                    alert("Book added successful.")
+                    if(msg == -1){location.reload(true);}
+                }
+            });             
+        }
+
+        function bookDelete(){
+            var bookName = document.getElementById('bookName_id').value;
+            var author = document.getElementById('author_id').value;
+
+            if(bookName.length == 0){alert("Fill out the book name, please."); return;}
+            if(author.length == 0){alert("Fill out the author name, please."); return;}
+
+            $.ajax({
+                type: "POST",
+                url: "../modify_book.php",
+                data: { action:"delete", bookName:bookName, author:author },
+                success:function( msg ) {
+                    console.log(msg);
+                    if(msg == -1){location.reload(true);}
+                }
+            });             
+        }
+
+
+    </script>
+
+</head>
+<body>
+
+
+
+<h1>Book Statistics</h1>
+ 
+<div id="add_book_div"> Book Name: <input type="text" name="bookName" id="bookName_id"> 
+    &nbsp;&nbsp;&nbsp;&nbsp;
+    Book Author: <input type="text" name="author" id="author_id">
+    &nbsp;&nbsp;&nbsp;&nbsp;
+    <button onclick="bookAdd()">ADD</button>
+    &nbsp;&nbsp;&nbsp;&nbsp;
+    <button onclick="bookDelete()">DELETE</button>
+
+</div>
+<br>
+
+<table id="table_id" class="display">
+    <thead>
+        <tr>
+            <th>Book ID</th>
+            <th>Book Name</th>
+            <th>Author</th>
+            <th>Downloads</th>
+        </tr>
+    </thead>
+    <tbody>
+
+    </tbody>
+</table>
+
+
+
+
+</body>
+</html>
