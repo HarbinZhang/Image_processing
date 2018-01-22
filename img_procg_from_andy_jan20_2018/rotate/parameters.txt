@@ -1,0 +1,5 @@
+
+Reads a square image, zero-pads the image so it can be rotated within a square, and rotates it by theta (radians).
+Uses nearest-neighbor interpolation.
+
+Parameter: theta=rotation angle clockwise in radians.

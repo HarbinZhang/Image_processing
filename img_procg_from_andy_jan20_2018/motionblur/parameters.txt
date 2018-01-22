@@ -1,0 +1,9 @@
+
+Reads in an image, motion blurs it with linear PSF, and deblurs it with Wiener filter.
+Reconstructed image is zero-padded in direction (horizontal) of blur, as it should be.
+
+Parameters: 
+L=length of blur in pixels. Range: 30 to 100.
+sigma=noise strength. Range: 0 (no noise) to 30.
+lambda=Tikhonov parameter. Range: 0 (no regularization) to 1.
+Should include lambda=0 to show that regularization is needed.

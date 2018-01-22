@@ -1,0 +1,7 @@
+Inpaints a square grayscale image with some pixels set to zero
+using ISTA algorithm (may take a few seconds for some parameters).
+The example I have ran almost instantly.
+
+Parameters: IMAX=#iterations of ISTA; f=fraction of pixel values kept
+lambda=thresholding and shrinkage parameter. Range: 0.01 to 1.
+M=image size (read by algorithm).

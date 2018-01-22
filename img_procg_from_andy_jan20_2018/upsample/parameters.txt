@@ -1,0 +1,6 @@
+
+Original image is MXM (M is read by program).
+Upsampled (magnified) image MuXMu (note axes). 
+Should display magnified as larger than original.
+
+Parameter: Mu must be specified. Say Mu varies from 1.5M to 3M.

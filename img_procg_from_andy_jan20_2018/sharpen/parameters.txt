@@ -1,0 +1,6 @@
+
+Sharpens an image using (1) unsharp masking (2) Laplacian. 
+Both amplify high-wavenumber noise, as expected, 
+but Laplacian, while sharper, is much noisier.
+
+Parameters: sigma=standard deviation of Gaussian lowpass PSF. Range: 3 to 7.

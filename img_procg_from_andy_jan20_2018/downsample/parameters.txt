@@ -1,0 +1,6 @@
+
+Original image is MXM (M is read by program).
+Downsampled (thumbnail) image MdXMd (note axes). 
+Should display thumbnail as small.
+
+Parameters: Md must be specified. Say Md varies from M/10 to M/2.

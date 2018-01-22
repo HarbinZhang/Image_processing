@@ -1,0 +1,9 @@
+
+Blurs image with circular PSF of radius R pixels (diameter 2R+1)
+adds noise, and deblurs with Wiener filter (Tikhonov regularization).
+
+Parameters:
+
+R=radius in pixels of circular PSF. Range: 10 to 30 for 200X200 image.
+sigma=noise strength. Range: 0(none) to 20.
+lambda=Tikhonov parameter. Range: 0(none) to 0.5.

@@ -1,0 +1,10 @@
+Requires a square image with size MXM where M is a multiple of 16. 
+Had to zero-pad the clown image from 200X200 to 256X256.
+Original and reconstructed clown images are zero-padded.
+Displayed log of Haar transform (this didn't work for Daubechies).
+
+Parameters: sigma=noise level. Range: 0 to max(max(X))/10.
+lambda=threshold and shrinkage parameter for wavelet denoising. Range: 0 to sigma.
+
+2 runs: 1st shows program takes Haar wavelet transform of clown image and reconstructs it (sigma=0 and lambda=0).
+2nd adds noise with sigma=20 (largest clown pixel=255) and denoises with lambda=sigma=20. Visually much less noise.

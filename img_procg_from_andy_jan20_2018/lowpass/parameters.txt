@@ -1,0 +1,4 @@
+Performs brick-wall lowpass filtering on an image.
+
+Parameter: Omega=cutoff wavenumber. Range: 0 (everything filtered out) to pi (no filtering).
+Size MXN of image read by program.

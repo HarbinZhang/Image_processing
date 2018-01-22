@@ -1,0 +1,7 @@
+Edge detection using Sobel edge detector.
+Historical note: this was the first image processing tool 
+used in the first version of Adobe Photoshop, by Thomas Knoll,
+UM College of Engineering, son of Glenn Knoll, Prof. of NERS.
+
+Only parameter: Threshold T. Has to be set by trial and error.
+Range: max(X)/30 to max(X)/10 where max(X)=largest image pixel (here 255).

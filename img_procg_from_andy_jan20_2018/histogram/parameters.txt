@@ -1,0 +1,4 @@
+
+Image, histogram, and CDF (cumulative sum of histogram) 
+for original and transformed clown images using histogram equalization.
+Parameters: none.
