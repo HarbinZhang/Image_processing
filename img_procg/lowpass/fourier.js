@@ -1,29 +1,16 @@
-/******************\
-|   Fourier Image  |
-| @author Anthony  |
-| @version 1.1.2   |
-| @date 2014/06/14 |
-| @edit 2017/01/23 |
-\******************/
-
 var Fourier = (function() {
   /******************
    * work functions */
   function filter(data, dims, lowPass, highPass) {
     var lowPassSq = Math.pow(lowPass, 2);
     var highPassSq = Math.pow(highPass, 2);
+    console.log(highPass);
     var N = dims[1];
     var M = dims[0];
     for (var k = 0; k < N; k++) {
       for (var l = 0; l < M; l++) {
         var idx = k*M + l;
-        var d = Math.pow(k-M/2, 2) + Math.pow(l-N/2, 2);
-        if (
-          d > lowPassSq && isNaN(highPass) ||
-          d < highPassSq && isNaN(lowPass) ||
-          d < lowPassSq && !isNaN(lowPass) && !isNaN(highPass) ||
-          d > highPassSq && !isNaN(lowPass) && !isNaN(highPass)
-        ) {
+        if (lowPassSq < Math.pow(k-N/2, 2) || lowPassSq < Math.pow(l-M/2, 2) ) {
           data[idx] = new Fourier.Complex(0, 0);
         }
       }
