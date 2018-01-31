@@ -118,26 +118,30 @@ function transformAction() {
 
 	// var Y = conv2(H, H2);
 
-	// dims[1] = 8;
-	// dims[0] = 8;
 
-	// console.log(greyImage.getData().length);
+
 	var Y = conv2(H, greyImage.getData());
 	console.log(Y);
 
+	var FFT_len = 512;
 
-	FFT.init(dims[0]);
+
+	FFT.init(FFT_len);
+	// FFT.init(Y.length);
 	// FFT.init(8);
 	// var FYre = [], FYim = [];
-	var FYre = new Array(Y.length * Y[0].length);
-	var FYim = new Array(FYre.length);
+	// var FYre = new Array(Y.length * Y[0].length);
+	// var FYim = new Array(FYre.length);
+	var FYre = new Array(FFT_len*FFT_len);
+	var FYim = new Array(FFT_len*FFT_len);
 	FYre.fill(0.0);
 	FYim.fill(0.0);
 
-	for(var y=0; y<dims[1]; y++) {
-		for(var x=0; x<dims[0]; x++) {
-			var idx = y * dims[0] + x;
-			FYre[idx] = Y[y][x];
+	var FY_idx = 0;
+	for(var y=0; y<Y.length; y++) {
+		FY_idx = y * FFT_len;
+		for(var x=0; x<Y[0].length; x++) {
+			FYre[FY_idx++] = Y[y][x];
 		}
 	}	
 
@@ -145,35 +149,36 @@ function transformAction() {
 
 
 	// var FHre = [], FHim = [];
-	var FHre = new Array(FYre.length);
-	var FHim = new Array(FYre.length);
+	var FHre = new Array(FFT_len*FFT_len);
+	var FHim = new Array(FFT_len*FFT_len);
 	FHre.fill(0);
 	FHim.fill(0);
 
 
-	console.log(FHre);
+	// console.log(FHre);
 
-	
+
 
 	var H_idx = 0;
 	for(var y = 0; y < H.length; y++){
-		H_idx = y * dims[0];
+		H_idx = y * FFT_len;
 		for(var x = 0; x < H[0].length; x++){
-			FHre[H_idx] = H[y][x];
-			H_idx++;
+			FHre[H_idx++] = H[y][x];
 		}
 	} 
 
+	console.log(FHre);
 
 
 	FFT.fft2d(FYre, FYim);
 	FFT.fft2d(FHre, FHim);
 	
 
-	console.log("FYre: ", FYim);
-	console.log("FHre: ", FHim);
+	console.log("FYre: ", FYre);
+	console.log("FYim: ", FYim);
+	console.log("FHre: ", FHre);
+	console.log("FHim: ", FHim);
 
-	// return;
 
 
 	// var i = 1;
@@ -204,7 +209,7 @@ function transformAction() {
 	// console.log(FXHATim);
 
 
-	FFT.ifft2d(FYre, FYim);
+	// FFT.ifft2d(FYre, FYim);
 	// FFT.ifft2d(FHre, FHim);
 	FFT.ifft2d(FXHATre, FXHATim);
 	// console.log(re);
@@ -264,7 +269,7 @@ function transformAction() {
 	for (var k = 0; k < dims[1]; k++) {
 	  for (var l = 0; l < dims[0]; l++) {
 	    var idx = (dims[0]*k + l);
-	    val = Math.round(FXHATre[idx]);
+	    val = Math.round(FXHATre[FFT_len*k + l]);
 	    currImageData.data[idx*4+3] = 255; // full alpha
 	    for (var c = 0; c < 3; c++) { 
 	      currImageData.data[4*idx+c] = val;
@@ -278,6 +283,9 @@ function transformAction() {
 	// var duration = +new Date() - start;
 	// console.log('It took '+duration+'ms to compute the FT.');
 }
+
+
+
 
 
 

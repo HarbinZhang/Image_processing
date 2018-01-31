@@ -91,7 +91,6 @@ var checkValid = function(image, filter, x, y, i, j){
     if(y-j < 0 || y-j >=image.length || x-i < 0 || x-i >= image[0].length){return false;}
 
     return true;
-
 }
 
 function conv2_helper(image, filter, visited, y, x, j, i, base){
