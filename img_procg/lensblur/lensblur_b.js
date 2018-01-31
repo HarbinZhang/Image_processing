@@ -8,6 +8,8 @@ var ctxs;
 var h;
 var $h;
 var h_;
+var Y;
+var H;
 
 var start;
 
@@ -22,9 +24,19 @@ var init = function() {
 	canvases = [], ctxs = [];
 	h = $h = h_ = function() { return false; };
 
-	$('#omega_selector').bind('input',function(e){
-      var x = parseInt($('#omega_selector').val());
-      $('#omega_val').html(x+"%");
+	$('#R_selector').bind('input',function(e){
+      var x = parseInt($('#R_selector').val());
+      $('#R_val').html(x);
+    });
+
+    $('#sigma_selector').bind('input',function(e){
+      var x = parseInt($('#sigma_selector').val());
+      $('#sigma_val').html(x);
+    });
+
+    $('#lambda_selector').bind('input',function(e){
+      var x = parseFloat($('#lambda_selector').val());
+      $('#lambda_val').html(x);
     });
 
     loadImage('clown.png');
@@ -32,14 +44,15 @@ var init = function() {
     $s('#transform-btn').addEventListener('click', function() {
       start = +new Date();
  
-      // if (!h()) {
-      //   return alert(
-      //     'You need to draw an image to canvas 1 first.'
-      //   );
-      // }
- 
       // placed in a callback so the UI has a chance to update
       disableButtons(transformAction);
+    });
+
+    $s('#reconstruct-btn').addEventListener('click', function() {
+      start = +new Date();
+ 
+      // placed in a callback so the UI has a chance to update
+      disableButtons(reconstructAction);
     });
 }
 
@@ -91,13 +104,12 @@ var loadImage = function(loc){
 function transformAction() {
 
 
-	var lambda = 0.1;
-	var R = 3;
+	var R = $('#R_selector').val();
 	var R1 = 2*R + 1;
 	var N1 = dims[1] + 2 * R;
 	var M1 = dims[0] + 2 * R;
 
-	var H = new_2D_Array(R1);
+	H = new_2D_Array(R1);
 	for(var i = 0; i < R1; i++){
 		for(var j = 0; j < R1; j++){
 			if((i-R)*(i-R) + (j-R)*(j-R) <= R*R){
@@ -120,9 +132,45 @@ function transformAction() {
 
 
 
-	var Y = conv2(H, greyImage.getData());
-	console.log(Y);
+	Y = conv2(H, greyImage.getData());
+	// console.log(Y);
 
+	var sigma = $('#sigma_selector').val();
+	var Noise = randn(Y.length, Y[0].length, sigma);
+	console.log("Noise: ", Noise);
+	for(var j = 0; j < Y.length; j++){
+		for(var i = 0; i < Y[0].length; i++){
+			Y[j][i] += Noise[j][i];
+		}
+	}
+
+
+    // draw the pixels
+    var currImageData = ctxs[1].getImageData(
+      0, 0, dims[0], dims[1]
+    );
+    for (var k = 0; k < dims[1]; k++) {
+      for (var l = 0; l < dims[0]; l++) {
+        var idxInPixels = 4*(dims[0]*k + l);
+        currImageData.data[idxInPixels+3] = 255; // full alpha
+        // RGB are the same -> gray
+        for (var c = 0; c < 3; c++) { // lol c++
+          currImageData.data[idxInPixels+c] = Y[k][l]*2/(H.length*H.length);
+        }
+      }
+    }
+    ctxs[1].putImageData(currImageData, 0, 0);
+ 
+    enableButtons();
+ 
+    var duration = +new Date() - start;
+    console.log('It took '+duration+'ms to compute the FT.');
+
+
+}
+
+
+function reconstructAction() {
 	var FFT_len = 512;
 
 
@@ -193,6 +241,8 @@ function transformAction() {
 	// console.log(tempre, tempim);
 
 
+	var lambda = $('#lambda_selector').val();
+
 	var FXHATre = [];
 	var FXHATim = [];
 	for(var i = 0; i < FYre.length; i++){
@@ -260,7 +310,7 @@ function transformAction() {
 	// };
 
 	// // draw the pixels
-	var currImageData = ctxs[1].getImageData(
+	var currImageData = ctxs[2].getImageData(
 	  0, 0, dims[0], dims[1]
 	);
 
@@ -276,14 +326,13 @@ function transformAction() {
 	    }
 	  }
 	}
-	ctxs[1].putImageData(currImageData, 0, 0);
+	ctxs[2].putImageData(currImageData, 0, 0);
 
 	enableButtons();
 
-	// var duration = +new Date() - start;
-	// console.log('It took '+duration+'ms to compute the FT.');
+	var duration = +new Date() - start;
+	console.log('It took '+duration+'ms to reconstruct the image.');	
 }
-
 
 
 

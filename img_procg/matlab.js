@@ -1,4 +1,19 @@
 
+
+
+function randn(N, M, sigma){
+    var res = [];
+    for(var i = 0; i < N; i++){
+        var temp = [];
+        for(var j = 0; j < M; j++){
+            temp.push(sigma*Math.random());
+        }
+        res.push(temp);
+    }
+
+    return res;
+}
+
 function new_2D_Array(size){
 
     var result = [];
@@ -13,6 +28,7 @@ function new_2D_Array(size){
 
     return result;
 }
+
 
 
 

@@ -29,8 +29,10 @@
                 <br>
                 <canvas id="canvas1"></canvas>
                 <br>
-                <input id="omega_selector" type="range" id="low-freq-selector" max="100" min="0" step="1" value="0"><span id="omega_val" style="width: 20px; display: inline-block;">0%</span>
+                R: <input id="R_selector" type="range" id="R-selector" max="30" min="0" step="1" value="0"><span id="R_val" style="width: 20px; display: inline-block;">0</span>    
                 <br>
+                sigma: <input id="sigma_selector" type="range" id="sigma-selector" max="20" min="0" step="1" value="0"><span id="sigma_val" style="width: 20px; display: inline-block;">0</span>  
+                <br>                 
                 <input type="button" id="transform-btn" value="Compute 2D DFT">
             </div>
         </div>
@@ -40,7 +42,10 @@
                 3. Reconstructed image
                 <br>
                 <canvas id="canvas2"></canvas><br>
+                lambda: <input id="lambda_selector" type="range" id="lambda-selector" max="0.5" min="0" step="0.1" value="0"><span id="lambda_val" style="width: 20px; display: inline-block;">0</span>  
+                <br>                   
                 <input type="button" id="reconstruct-btn" value="Reconstruct image">
+
             </div>
             <div style="display: inline-block; vertical-align: top">
                 4. Difference image
