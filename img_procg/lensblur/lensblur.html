@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Lowpass</title>
+
+        <script type="text/javascript" src="../lib/jquery-1.10.2.min.js"></script>
+        <script type="text/javascript" src="../lib/d3.v3.min.js"></script>
+        <script type="text/javascript" src="../lib/require.js"></script>
+
+
+        <script src="../fft.js"></script>
+        <script src="../greyImage.js"></script>
+        <script src="../matlab.js"></script>
+        <script src="fourier.js"></script>
+        <script src="lensblur_b.js"></script>
+    </head>
+    <body>
+        <h1>Lensblur</h1>
+
+        <div>
+            <div style="display: inline-block; margin-right: 22px; vertical-align: top">
+                1. Original image
+                <br>
+                <canvas id="canvas0"></canvas>
+            </div>
+            <div style="display: inline-block; vertical-align: top">
+                2. Fourier image (log of magnitude)
+                <br>
+                <canvas id="canvas1"></canvas>
+                <br>
+                <input id="omega_selector" type="range" id="low-freq-selector" max="100" min="0" step="1" value="0"><span id="omega_val" style="width: 20px; display: inline-block;">0%</span>
+                <br>
+                <input type="button" id="transform-btn" value="Compute 2D DFT">
+            </div>
+        </div>
+        <br>
+        <div>
+            <div style="display: inline-block; margin-right: 22px; vertical-align: top">
+                3. Reconstructed image
+                <br>
+                <canvas id="canvas2"></canvas><br>
+                <input type="button" id="reconstruct-btn" value="Reconstruct image">
+            </div>
+            <div style="display: inline-block; vertical-align: top">
+                4. Difference image
+                <br>
+                <canvas id="canvas3"></canvas><br>
+                <input type="button" id="difference-btn" value="See difference">
+            </div>
+        </div>
+    </body>
+</html>
