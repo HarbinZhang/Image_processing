@@ -5,9 +5,6 @@ var cc = 9e-3;
 
 var canvases;
 var ctxs;
-var h;
-var $h;
-var h_;
 var Y;
 var H;
 
@@ -22,7 +19,6 @@ window.onload = function(){
 
 var init = function() {
 	canvases = [], ctxs = [];
-	h = $h = h_ = function() { return false; };
 
 	$('#R_selector').bind('input',function(e){
       var x = parseInt($('#R_selector').val());
@@ -64,7 +60,7 @@ var loadImage = function(loc){
 	img.addEventListener('load', function(){
 		dims[0] = img.width;
 		dims[1] = img.height;
-		for( var i = 0; i < 4; i++){
+		for( var i = 0; i < 3; i++){
 			canvases[i] = $s('#canvas' + i);
 			canvases[i].width = dims[0];
 			canvases[i].height = dims[1];
@@ -341,7 +337,6 @@ function reconstructAction() {
 function disableButtons(callback) {
 	$s('#transform-btn').disabled = true;
 	$s('#reconstruct-btn').disabled = true;
-	$s('#difference-btn').disabled = true;
 
 	setTimeout(callback, 6); // 6ms for the UI to update
 }
@@ -351,7 +346,6 @@ function disableButtons(callback) {
 function enableButtons() {
   $s('#transform-btn').disabled = false;
   $s('#reconstruct-btn').disabled = false;
-  $s('#difference-btn').disabled = false;
 }
 
 function $s(id) {
