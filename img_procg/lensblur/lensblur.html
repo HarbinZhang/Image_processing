@@ -12,8 +12,7 @@
         <script src="../fft.js"></script>
         <script src="../greyImage.js"></script>
         <script src="../matlab.js"></script>
-        <script src="fourier.js"></script>
-        <script src="lensblur_b.js"></script>
+        <script src="lensblur.js"></script>
     </head>
     <body>
         <h1>Lensblur</h1>
@@ -25,7 +24,7 @@
                 <canvas id="canvas0"></canvas>
             </div>
             <div style="display: inline-block; vertical-align: top">
-                2. Fourier image (log of magnitude)
+                2. Blurred Image
                 <br>
                 <canvas id="canvas1"></canvas>
                 <br>
@@ -33,7 +32,7 @@
                 <br>
                 sigma: <input id="sigma_selector" type="range" id="sigma-selector" max="20" min="0" step="1" value="0"><span id="sigma_val" style="width: 20px; display: inline-block;">0</span>  
                 <br>                 
-                <input type="button" id="transform-btn" value="Compute 2D DFT">
+                <!-- <input type="button" id="transform-btn" value="Compute 2D DFT"> -->
             </div>
         </div>
         <br>
@@ -44,7 +43,7 @@
                 <canvas id="canvas2"></canvas><br>
                 lambda: <input id="lambda_selector" type="range" id="lambda-selector" max="0.5" min="0" step="0.1" value="0"><span id="lambda_val" style="width: 20px; display: inline-block;">0</span>  
                 <br>                   
-                <input type="button" id="reconstruct-btn" value="Reconstruct image">
+                <!-- <input type="button" id="reconstruct-btn" value="Reconstruct image"> -->
 
             </div>
         </div>
