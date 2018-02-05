@@ -1,3 +1,5 @@
+
+
 var dims = [-1, -1];
 var cc = 9e-3;
 
@@ -5,6 +7,7 @@ var canvases;
 var ctxs;
 var Y;
 var H;
+var M1;
 
 var start;
 
@@ -18,9 +21,9 @@ window.onload = function(){
 var init = function() {
 	canvases = [], ctxs = [];
 
-	$('#R_selector').bind('input',function(e){
-      var x = parseInt($('#R_selector').val());
-      $('#R_val').html(x);
+	$('#L_selector').bind('input',function(e){
+      var x = parseInt($('#L_selector').val());
+      $('#L_val').html(x);
       start = +new Date();
       transformAction();
     });
@@ -40,19 +43,9 @@ var init = function() {
     });
 
     loadImage('clown.png');
- 
-    // $s('#transform-btn').addEventListener('click', function() {
-    //   start = +new Date();
-    //   // placed in a callback so the UI has a chance to update
-    //   disableButtons(transformAction);
-    // });
 
-    // $s('#reconstruct-btn').addEventListener('click', function() {
-    //   start = +new Date();
- 
-    //   // placed in a callback so the UI has a chance to update
-    //   disableButtons(reconstructAction);
-    // });
+
+
 }
 
 
@@ -103,21 +96,26 @@ var loadImage = function(loc){
 function transformAction() {
 
 
-	var R = $('#R_selector').val();
-	var R1 = 2*R + 1;
-	var N1 = dims[1] + 2 * R;
-	var M1 = dims[0] + 2 * R;
+	var L = $('#L_selector').val();
+	// var L = 51;
+	// var R1 = 2*R + 1;
+	// var N1 = dims[1] + 2 * R;
+	M1 = dims[0] + L - 1;
 
-	H = new_2D_Array(R1);
-	for(var i = 0; i < R1; i++){
-		for(var j = 0; j < R1; j++){
-			if((i-R)*(i-R) + (j-R)*(j-R) <= R*R){
-				H[i][j] = 1;
-			}
-		}
-	}
+
+
+	// H = new_2D_Array(R1);
+	// for(var i = 0; i < R1; i++){
+	// 	for(var j = 0; j < R1; j++){
+	// 		if((i-R)*(i-R) + (j-R)*(j-R) <= R*R){
+	// 			H[i][j] = 1;
+	// 		}
+	// 	}
+	// }
+	H = ones(1, L);
 
 	console.log(H);
+
 
 
 	// var H2 = new_2D_Array(6);
@@ -131,30 +129,26 @@ function transformAction() {
 
 
 
-	Y = conv2(H, greyImage.getData());
-	// console.log(Y);
 
-	var sigma = $('#sigma_selector').val();
-	var Noise = randn(Y.length, Y[0].length, sigma);
-	console.log("Noise: ", Noise);
-	for(var j = 0; j < Y.length; j++){
-		for(var i = 0; i < Y[0].length; i++){
-			Y[j][i] += Noise[j][i];
-		}
-	}
+
+	Y = conv2(H, greyImage.getData());
+	console.log(Y);
+
+
 
 
     // draw the pixels
     var currImageData = ctxs[1].getImageData(
       0, 0, dims[0], dims[1]
     );
+    
     for (var k = 0; k < dims[1]; k++) {
       for (var l = 0; l < dims[0]; l++) {
         var idxInPixels = 4*(dims[0]*k + l);
         currImageData.data[idxInPixels+3] = 255; // full alpha
         // RGB are the same -> gray
         for (var c = 0; c < 3; c++) { // lol c++
-          currImageData.data[idxInPixels+c] = Y[k][l]*2/(H.length*H.length);
+          currImageData.data[idxInPixels+c] = Y[k][l]/L;
         }
       }
     }
@@ -165,6 +159,7 @@ function transformAction() {
     var duration = +new Date() - start;
     console.log('It took '+duration+'ms to compute the FT.');
 
+    return;
 
 }
 
@@ -228,16 +223,6 @@ function reconstructAction() {
 
 
 
-	// var i = 1;
-
-	// var tempre = (FYre[i] * FHre[i] + FYim[i] * FHim[i]) / (FHre[i]*FHre[i] + FHim[i]*FHim[i] + lambda*lambda);
-	// // FXHATre.push(tempre);
-	// var tempim = (FYim[i] * FHre[i] - FYre[i] * FHim[i]) / (FHre[i]*FHre[i] + FHim[i]*FHim[i] + lambda*lambda);
-	// // FXHATim.push(tempim);
-
-	// console.log(FYre[i], FYim[i], FHre[i], FHim[i]);
-
-	// console.log(tempre, tempim);
 
 
 	var lambda = $('#lambda_selector').val();
@@ -267,46 +252,6 @@ function reconstructAction() {
 
 	// console.log(FXHATre);
 
-	// for(var y=0; y<h; y++) {
-	// 	i = y*w;
-	// 	for(var x=0; x<w; x++) {
-	// 	  val = re[i + x];
-	// 	  p = (i << 2) + (x << 2);
-	// 	  data[p] = data[p + 1] = data[p + 2] = val;
-	// 	}
-	// }
-
-
-
-
-	// compute the h hat values
-
-
-	// var h_hats = [];
-	// Fourier.transform(h(), h_hats);
-	// h_hats = Fourier.shift(h_hats, dims);
-
-	// // get the largest magnitude
-	// var maxMagnitude = 0;
-	// for (var ai = 0; ai < h_hats.length; ai++) {
-	//   var mag = h_hats[ai].magnitude();
-	//   if (mag > maxMagnitude) {
-	//     maxMagnitude = mag;
-	//   }
-	// }
-
-	// var x = parseInt($('#omega_selector').val());
-	// var lowPassRadius = x/100 * dims[0] /2;
-
-	// Fourier.filter(h_hats, dims, lowPassRadius, NaN);
-
-	// // store them in a nice function to match the math
-	// $h = function(k, l) {
-	//   if (arguments.length === 0) return h_hats;
-
-	//   var idx = k*dims[0] + l;
-	//   return h_hats[idx];
-	// };
 
 	// // draw the pixels
 	var currImageData = ctxs[2].getImageData(

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>MotionBlur</title>
+
+        <script type="text/javascript" src="../lib/jquery-1.10.2.min.js"></script>
+        <script type="text/javascript" src="../lib/d3.v3.min.js"></script>
+        <script type="text/javascript" src="../lib/require.js"></script>
+
+
+        <script src="../fft.js"></script>
+        <script src="../greyImage.js"></script>
+        <script src="../matlab.js"></script>
+        <script src="motionblur.js"></script>
+    </head>
+    <body>
+        <h1>MotionBlur</h1>
+
+        <div>
+            <div style="display: inline-block; margin-right: 22px; vertical-align: top">
+                1. Original image
+                <br>
+                <canvas id="canvas0"></canvas>
+            </div>
+            <div style="display: inline-block; vertical-align: top">
+                2. Blurred Image
+                <br>
+                <canvas id="canvas1"></canvas>
+                <br>
+                L: <input id="L_selector" type="range" id="L-selector" max="100" min="1" step="1" value="30"><span id="L_val" style="width: 20px; display: inline-block;">30</span>    
+                <br>
+                sigma: <input id="sigma_selector" type="range" id="sigma-selector" max="30" min="0" step="1" value="0"><span id="sigma_val" style="width: 20px; display: inline-block;">0</span>  
+                <br>                 
+                <!-- <input type="button" id="transform-btn" value="Compute 2D DFT"> -->
+            </div>
+        </div>
+        <br>
+        <div>
+            <div style="display: inline-block; margin-right: 22px; vertical-align: top">
+                3. Reconstructed image
+                <br>
+                <canvas id="canvas2"></canvas><br>
+                lambda: <input id="lambda_selector" type="range" id="lambda-selector" max="1" min="0" step="0.1" value="0"><span id="lambda_val" style="width: 20px; display: inline-block;">0</span>  
+                <br>                   
+                <!-- <input type="button" id="reconstruct-btn" value="Reconstruct image"> -->
+
+            </div>
+        </div>
+    </body>
+</html>

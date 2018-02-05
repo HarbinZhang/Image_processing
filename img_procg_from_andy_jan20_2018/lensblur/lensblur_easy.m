@@ -1,4 +1,3 @@
-
 clear;
 X=imread('clown.jpg');
 X=double(X);

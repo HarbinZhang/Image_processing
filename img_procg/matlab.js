@@ -1,6 +1,22 @@
 
 
 
+
+function ones(N, M){
+    var res = [];
+    for(var i = 0; i < N; i++){
+        var temp = [];
+        for(var j = 0; j < M; j++){
+            temp.push(1);
+        }
+        res.push(temp);
+    }
+
+    return res;
+
+}
+
+
 function randn(N, M, sigma){
     var res = [];
     for(var i = 0; i < N; i++){
@@ -105,7 +121,6 @@ function conv2(filter, image){
 var checkValid = function(image, filter, x, y, i, j){
     // not valid for image[y-j][x-i]
     if(y-j < 0 || y-j >=image.length || x-i < 0 || x-i >= image[0].length){return false;}
-
     return true;
 }
 

@@ -4,11 +4,6 @@ function GreyImage(w, h, data){
 	this.h = h;
 	this.data = [];
 
-	// for(var i = 0; i < data.length; i+=4){
-	// 	var color = Math.round((data[i]*30 + data[i+1]*59 + data[i+2]*11) / 100);
-	// 	this.data.push(color);
-	// }
-
 	var temp = [];
 	for(var j = 0; j < h; j++){
 		for(var i = 0; i < w; i++){
