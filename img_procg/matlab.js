@@ -1,5 +1,87 @@
 
 
+function matrix_minus(M, N){
+    if(M == null || M.length == 0 || M[0].length == 0){return null;}
+    if(N == null || N.length == 0 || N[0].length == 0){return null;}    
+
+    var res = [];
+    for(var i = 0; i < M[0].length; i++){
+        var temp = [];
+        for(var j = 0; j < M.length; j++){
+            temp.push(M[i][j] - N[i][j]);
+        }
+        res.push(temp);
+    }
+    return res;    
+}
+
+
+function matrix_add(M, N){
+    if(M == null || M.length == 0 || M[0].length == 0){return null;}
+    if(N == null || N.length == 0 || N[0].length == 0){return null;}    
+
+    var res = [];
+    for(var i = 0; i < M[0].length; i++){
+        var temp = [];
+        for(var j = 0; j < M.length; j++){
+            temp.push(M[i][j] + N[i][j]);
+        }
+        res.push(temp);
+    }
+    return res;
+}
+
+function matrix_sum(M){
+    if(M == null || M.length == 0 || M[0].length == 0){return null;}
+    var res = 0;
+    for(var i = 0; i < M[0].length; i++){
+        for(var j = 0; j < M.length; j++){
+            res += M[i][j];
+        }
+    }
+    return res;    
+}
+
+
+
+function transpose(M){
+    if(M == null || M.length == 0 || M[0].length == 0){return null;}
+    var res = [];
+    for(var i = 0; i < M[0].length; i++){
+        var temp = [];
+        for(var j = 0; j < M.length; j++){
+            temp.push(M[j][i]);
+        }
+        res.push(temp);
+    }
+    return res;
+}
+
+function min(M){
+    if(M == null || M.length == 0 || M[0].length == 0){return null;}
+    var res = M[0][0];
+    for(var i = 0; i < M.length; i++){
+        for(var j = 0; j < M[0].length; j++){
+            // if(res > M[i][j])
+            res = Math.min(res, M[i][j]);
+        }
+    }
+    return res;
+}
+
+function max(M){
+    if(M == null || M.length == 0 || M[0].length == 0){return null;}
+    var res = M[0][0];
+    for(var i = 0; i < M.length; i++){
+        for(var j = 0; j < M[0].length; j++){
+            // if(res > M[i][j])
+            res = Math.max(res, M[i][j]);
+        }
+    }
+    return res;
+}
+
+
 
 
 function ones(N, M){
@@ -46,10 +128,28 @@ function new_2D_Array(size){
 }
 
 
+function conv2_same(image, filter){
+    var temp = conv2(filter, image);
+    var res = new Array(image.length);
+    for(var i = 0; i < res.length; i++){
+        res[i] = new Array(image[0].length);
+    }
+
+    var startRow = Math.ceil((temp.length-image.length)/2);
+    var startColumn = Math.ceil((temp[0].length-image[0].length)/2);
+
+    console.log(startColumn);
+
+    for(var i = 0; i < res.length; i++){
+        for(var j = 0; j < res[0].length; j++){
+            res[i][j] = temp[i+startRow][j+startColumn];         
+        }
+    }
+    return res;
+}
 
 
 function conv2(filter, image){
-
     var result = new Array(image.length + filter.length - 1);
     console.log(Math.floor(filter.length/2));
     // var result = new Array(image.length - filter.length + 1);
