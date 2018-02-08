@@ -88,6 +88,8 @@ var loadImage = function(loc){
 
 		var duration = +new Date() - start; // unary add
 		console.log('It took ' + duration + 'ms to draw the image.');
+		transformAction();
+		reconstructAction();
 	});
 	img.crossOrigin = "anonymous";
 	img.src = loc;
