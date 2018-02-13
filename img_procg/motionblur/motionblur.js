@@ -15,7 +15,6 @@ var greyImage;
 
 window.onload = function(){
 	init();
-	loadImage('clown.png');
 }
 
 var init = function() {
@@ -252,7 +251,7 @@ function reconstructAction() {
 
 
 
-	// console.log(FXHATre);
+	console.log(FXHATre);
 
 
 	// // draw the pixels

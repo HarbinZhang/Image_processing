@@ -12,7 +12,6 @@ var greyImage;
 
 window.onload = function(){
 	init();
-	loadImage('clown.png');
 }
 
 var init = function() {
@@ -219,6 +218,7 @@ function reconstructAction() {
 
 	console.log(FHre);
 
+	return;
 
 	FFT.fft2d(FYre, FYim);
 	FFT.fft2d(FHre, FHim);

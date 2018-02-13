@@ -16,7 +16,6 @@ var greyImage;
 
 window.onload = function(){
 	init();
-	loadImage('tire.png');
 }
 
 var init = function() {

@@ -83,44 +83,89 @@ var loadImage = function(loc){
 
 function transformAction() {
 
-	var X = greyImage.getData();
+	dims[0] = 8;
+	dims[1] = 8;
+	X = ones(4,4);
 
-	var H = [[1,2,1],[0,0,0],[-1,-2,-1]];
+	// var X = greyImage.getData();
+	var M = dims[0];
+	// var Md = 5;
 
-	// X=(X-min(min(X)))/(max(max(X))-min(min(X)));
-	var minX = min(X);
-	var maxX = max(X);
+	// FFT.init(dims[0]);
 
-	// Y = X.map(x => (x - minX)/(maxX - minX));
+	// var FXre = new Array(dims[0] * dims[1]);
+	// var FXim = new Array(dims[0] * dims[1]);
 
-	Y = X.map(function(row){
-		return row.map(function(cell){
-			return (cell - minX)/(maxX - minX);
-		})
-	})
+	// FXre.fill(0.0);
+	// FXim.fill(0.0);
 
-	// var T = 1.3;
-	var T = $('#T_selector').val();
+	// var FX_idx = 0;
+	// for( var y = 0; y < X.length; y++ ){
+	// 	FX_idx = y * M;
+	// 	for(var x = 0; x < X[0].length; x++){
+	// 		FXre[FX_idx++] = X[y][x];
+	// 	}
+	// }
+	// console.log(FXre);
+
+	// FFT.fft2d(FXre, FXim);
+
+	// console.log(FXre);
+
+	var what = fft2d(ones(5,5), 5);
+	// console.log(what.re);
+	var what = ifft2d(what.re,what.im, 8);
+	console.log(what);
+	return;
+
+	// FFT.fft2d(FXre, FXim);
 
 
 
-	var Y1 = conv2(H, Y);
-	var Y2 = conv2(transpose(H), Y);
-	// var Y3 = Math.sqrt(Y1.map(x => x*x) + Y2.map(x => x*x));
+	// console.log("FXre:", FXre);
+	// console.log("FXim:", FXim);
+	// console.log("FXre:", FXre.map(x => x*M/Md));
+	// console.log("FXim:", FXim.map(x => x*M/Md));
 
-	var Y3 = [];
-	for( var i = 0; i < Y1.length; i++){
-		var temp = [];
-		for( var j = 0; j < Y1[0].length;j++){
-			var t = Y1[i][j]*Y1[i][j] + Y2[i][j]*Y2[i][j];
-			if(t < T){temp.push(0);}
-			else{temp.push(255);}
-		}
-		Y3.push(temp);
-	}
+	// var MM = [];
 
-	console.log(Y3);
+	// if(Md % 2 == 0){
+	// 	for(var i = 0; i < Md/2; i++){MM.push(i);}
+	// 		MM.push(-1);
+	// 	for(var i = M+1-Md/2; i < M; i++){MM.push(i);}
 
+	// }else{
+	// 	for(var i = 0; i < (Md+1)/2; i++){MM.push(i);}
+	// 	for(var i = M+1-(Md+1)/2; i < M; i++){MM.push(i);}
+	// }
+
+	// console.log(MM);
+
+	// FYre = [];
+	// FYim = [];
+	// for(var i = 0; i < Md; i ++){
+	// 	var base = MM[i] * M;
+	// 	for(var j = 0; j < Md; j ++){
+	// 		if(MM[i] == -1 || MM[j] == -1){
+	// 			FYre.push(0);
+	// 			FYim.push(0);
+	// 			continue;
+	// 		}
+	// 		FYre.push(FXre[base + MM[j]]*M/Md);
+	// 		FYim.push(FXim[base + MM[j]]*M/Md);
+	// 	}
+	// }
+
+
+	// return;
+
+
+	// var DownSampled = ifft2d(FYre, FYim, Md);
+	// DownSampled = clamp(DownSampled);
+	// console.log(DownSampled);
+	// return;
+
+	FFT.ifft2d(what.re, what.im);
 
 
     // draw the pixels
@@ -128,13 +173,15 @@ function transformAction() {
       0, 0, dims[0], dims[1]
     );
     
+    var rate = Md / dims[0];
     for (var k = 0; k < dims[1]; k++) {
       for (var l = 0; l < dims[0]; l++) {
         var idxInPixels = 4*(dims[0]*k + l);
         currImageData.data[idxInPixels+3] = 255; // full alpha
         // RGB are the same -> gray
         for (var c = 0; c < 3; c++) { // lol c++
-          currImageData.data[idxInPixels+c] = Y3[k][l];
+          // currImageData.data[idxInPixels+c] = DownSampled[Math.round(k*rate) * Md + Math.round(l*rate)];
+          currImageData.data[idxInPixels+c] = what.re[k*M + l];
         }
       }
     }
@@ -145,7 +192,6 @@ function transformAction() {
     console.log('It took '+duration+'ms.');
 
     return;
-
 }
 
 

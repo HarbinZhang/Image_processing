@@ -1,5 +1,136 @@
 
 
+function zeroPad(X, M, N){
+    var M0 = X.length;
+    var N0 = X[0].length;
+
+    for(var y = 0; y < M0; y++){
+        for(var x = N0; x < N; x++){
+            X[y].push(0);
+        }
+    }
+
+    var temp = new Array(M);
+    temp.fill(0);
+    for(var y = M0; y < M; y++){
+        X.push(temp);
+    }
+
+    return X;
+}
+
+
+
+function clamp(X){
+    var max = X[0];
+    for(var i = 0; i < X.length; i++){
+        max = Math.max(max, X[i]);
+    }
+    var rate = 255/max;
+    return X.map(x => Math.round(x * rate));
+}
+
+
+function complexNum(re,im){
+    this.re = re;
+    this.im = im;
+}
+
+function fft2d(X, len){
+    var FFT_len = 1;
+    while(FFT_len < X.length){FFT_len = FFT_len*2;}
+
+    FFT.init(FFT_len);
+
+    var FYre = new Array(FFT_len*FFT_len);
+    var FYim = new Array(FFT_len*FFT_len);
+
+    FYre.fill(0);
+    FYim.fill(0);
+
+
+    var FY_idx = 0;
+    var FX_idx = 0;
+    for(var y=0; y<len; y++) {
+        FY_idx = y * FFT_len;
+        for(var x=0; x<len; x++) {
+            FYre[FY_idx++] = X[y][x];
+        }
+    }
+
+    FFT.fft2d(FYre, FYim);
+
+    return new complexNum(FYre, FYim);
+}
+
+
+function ifft2d(FXre, FXim, len){
+    if(FXre.length != FXim.length || FXre[0].length != FXim[0].length){return null;}
+    var FFT_len = 1;
+    while(FFT_len < len){FFT_len = FFT_len*2;}
+
+
+    FFT.init(FFT_len);
+
+    var FYre = new Array(FFT_len*FFT_len);
+    var FYim = new Array(FFT_len*FFT_len);
+
+    FYre.fill(0);
+    FYim.fill(0);
+
+    console.log("FXre:", FXre);
+    console.log("FXim:", FXim);
+
+    var FY_idx = 0;
+    var FX_idx = 0;
+    for(var y=0; y<len; y++) {
+        FY_idx = y * FFT_len;
+        for(var x=0; x<len; x++) {
+            FYre[FY_idx] = FXre[FX_idx];
+            FYim[FY_idx++] = FXim[FX_idx++];
+        }
+    }
+
+
+    FFT.ifft2d(FYre, FYim);
+
+    console.log("FYre:", FYre);
+    console.log("FYim:", FYim);
+
+
+    var res = []
+    for (var k = 0; k < len; k++) {
+        for (var l = 0; l < len; l++) {
+            res.push(FYre[FFT_len*k + l]);
+        }
+    }
+
+    return res;
+}
+
+function matrix_multi(M, N){
+    if(M == null || M.length == 0 || M[0].length == 0){return null;}
+    if(N == null || N.length == 0 || N[0].length == 0){return null;}    
+    if(M[0].length != N.length){return null;}
+
+    var res = [];
+    for( var y = 0; y < M.length; y++){
+        var row = [];
+        for(var x = 0; x < N[0].length; x++){
+            
+            var temp = 0;
+            for(var j = 0; j < M[0].length; j++){
+                temp += M[y][j]*N[j][x];
+            }
+            row.push(temp);
+
+        }
+        res.push(row);
+    }    
+
+    return res;
+}
+
 function matrix_minus(M, N){
     if(M == null || M.length == 0 || M[0].length == 0){return null;}
     if(N == null || N.length == 0 || N[0].length == 0){return null;}    
@@ -96,6 +227,20 @@ function ones(N, M){
 
     return res;
 
+}
+
+
+function zeros(N,M){
+    var res = [];
+    for(var i = 0; i < N; i++){
+        var temp = [];
+        for(var j = 0; j < M; j++){
+            temp.push(0);
+        }
+        res.push(temp);
+    }
+
+    return res;    
 }
 
 
