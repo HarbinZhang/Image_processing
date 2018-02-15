@@ -13,6 +13,8 @@ var start;
 
 var greyImage;
 
+var SN = Math.round(Math.sqrt(2) * 256);
+
 window.onload = function(){
 	init();
 }
@@ -20,9 +22,9 @@ window.onload = function(){
 var init = function() {
 	canvases = [], ctxs = [];
 
-	$('#Md_selector').bind('input',function(e){
-      var x = parseInt($('#Md_selector').val());
-      $('#Md_val').html(x);
+	$('#theta_selector').bind('input',function(e){
+      var x = parseInt($('#theta_selector').val());
+      $('#theta_val').html(x);
       start = +new Date();
       transformAction();
     });
@@ -38,12 +40,19 @@ var loadImage = function(loc){
 	img.addEventListener('load', function(){
 		dims[0] = img.width;
 		dims[1] = img.height;
-		for( var i = 0; i < 2; i++){
-			canvases[i] = $s('#canvas' + i);
-			canvases[i].width = dims[0];
-			canvases[i].height = dims[1];
-			ctxs[i] = canvases[i].getContext('2d');
-		}
+
+
+		canvases[0] = $s('#canvas' + 0);
+		canvases[0].width = dims[0];
+		canvases[0].height = dims[1];
+		ctxs[0] = canvases[0].getContext('2d');
+
+
+		canvases[1] = $s('#canvas' + 1);
+		canvases[1].width = SN;
+		canvases[1].height = SN;
+		ctxs[1] = canvases[1].getContext('2d');
+
 
 		ctxs[0].drawImage(img, 0, 0, img.width, img.height);
 
@@ -80,13 +89,11 @@ function transformAction() {
 
 	var X = greyImage.getData();
 
-	// var Md = $('#Md_selector').val();
+	var theta = $('#theta_selector').val();
 
-
-
+	theta = Math.PI * theta / 180;
 
 	var N = dims[0];
-	var theta = Math.PI/6;
 
 	if(N % 2 == 0){
 		for(var i = 0; i < X.length; i++){
@@ -97,12 +104,16 @@ function transformAction() {
 	}
 
 
-	var SN = Math.round(Math.sqrt(2) * N);
+	
 	X = zeroPad(X, SN, SN);
 	Y = zeros(SN, SN);
 
 
 	var A = [[Math.cos(theta), Math.sin(theta)], [-Math.sin(theta), Math.cos(theta)]];
+
+	// console.log(Math.cos(theta));
+
+	// return ;
 
 	var I = [];
 	for(var i = 0; i < N; i++){
@@ -115,28 +126,40 @@ function transformAction() {
 	var JS = Math.round(IS * Math.sqrt(2));
 	var II = I.map(row => row.map(ceil => ceil - IS));
 
-	var J = matrix_multi()
+	var J = matrix_multi(II, A);
+	J = J.map(row => row.map(ceil => Math.round(ceil) + JS));
 
-	console.log(II);
-	return;
+	// Y(SN*(J(:,1)-1)+J(:,2))=X(SN*(I(:,1)-1)+I(:,2))
+
+	for(var i = 0; i < I.length; i++){
+		var idx_X = SN*(I[i][0]) + I[i][1];
+		var idx_Y = SN*(J[i][0]-1) + J[i][1];
+		try{
+			Y[Math.floor(idx_Y/SN)][idx_Y%SN] = X[Math.floor(idx_X/SN)][idx_X%SN];
+		}catch(e){
+			console.log(Math.floor(idx_Y/SN));
+			console.log(e);
+		}
+		
+	}
+
+	// console.log(Y);
 
 
 
 
     // draw the pixels
     var currImageData = ctxs[1].getImageData(
-      0, 0, dims[0], dims[1]
+      0, 0, SN, SN
     );
     
-    var rate = Md / dims[0];
-    for (var k = 0; k < dims[1]; k++) {
-      for (var l = 0; l < dims[0]; l++) {
-        var idxInPixels = 4*(dims[0]*k + l);
+    for (var k = 0; k < SN; k++) {
+      for (var l = 0; l < SN; l++) {
+        var idxInPixels = 4*(SN*k + l);
         currImageData.data[idxInPixels+3] = 255; // full alpha
         // RGB are the same -> gray
         for (var c = 0; c < 3; c++) { // lol c++
-          currImageData.data[idxInPixels+c] = DownSampled[Math.floor(k*rate) * Md + Math.floor(l*rate)];
-          // currImageData.data[idxInPixels+c] = what.re[k*M + l];
+          currImageData.data[idxInPixels+c] = Y[k][l];
         }
       }
     }

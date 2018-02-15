@@ -27,7 +27,12 @@ var init = function() {
       transformAction();
     });
 
+
+
+
     loadImage('clown.png');
+
+
 }
 
 
@@ -78,97 +83,88 @@ var loadImage = function(loc){
 
 function transformAction() {
 
+	// dims[0] = 8;
+	// dims[1] = 8;
+	// X = ones(4,4);
+
 	var X = greyImage.getData();
 	var M = dims[0];
-	// var Mu = $('#T_selector').val();
-	var Mu = 400;
+
+	var Md = $('#T_selector').val();
+	// var Md = 5;
 
 	// FFT.init(dims[0]);
 
-	// var FXre = new Array(dims[0] * dims[1]);
-	// var FXim = new Array(dims[0] * dims[1]);
+	var FXre = new Array(dims[0] * dims[1]);
+	var FXim = new Array(dims[0] * dims[1]);
 
-	// FXre.fill(0.0);
-	// FXim.fill(0.0);
+	FXre.fill(0.0);
+	FXim.fill(0.0);
 
-	// var FX_idx = 0;
-	// for( var y = 0; y < X.length; y++ ){
-	// 	for(var x = 0; x < X[0].length; x++){
-	// 		FXre[FX_idx++] = X[y][x];
-	// 	}
-	// }
+	var FX_idx = 0;
+	for( var y = 0; y < X.length; y++ ){
+		FX_idx = y * M;
+		for(var x = 0; x < X[0].length; x++){
+			FXre[FX_idx++] = X[y][x];
+		}
+	}
 	// console.log(FXre);
-
-	// console.log(what.re);
-
-	var FX = fft2d(X, M);
-	var FXre = FX.re;
-	var FXim = FX.im;
-
 
 	// FFT.fft2d(FXre, FXim);
 
+	// console.log(FXre);
+
+	// var what = fft2d(ones(5,5), 5);
+	// // console.log(what.re);
+	// var what = ifft2d(what.re,what.im, 8);
+	// console.log(what);
+	// return;
+
+	FFT.fft2d(FXre, FXim);
 
 
-	var MU = [];
+
+	// console.log("FXre:", FXre);
+	// console.log("FXim:", FXim);
+	// console.log("FXre:", FXre.map(x => x*M/Md));
+	// console.log("FXim:", FXim.map(x => x*M/Md));
+
 	var MM = [];
 
-	var FYre = new Array(Mu*Mu);
-	var FYim = new Array(Mu*Mu);
-	FYre.fill(0);
-	FYim.fill(0);
-
-	// for(var i = 0; i < Mu; i++){
-	// 	FYre[i] = new Array(Mu);
-	// 	FYim[i] = new Array(Mu);
-	// }
-
-	// console.log(FYre);
-
-
-	if(Mu % 2 == 0){
-		for(var i = 0; i < (Mu+1)/2; i++){MU.push(i);}
-		for(var i = Mu+1-M/2; i < Mu; i++){MU.push(i);}
-		for(var i = 0; i < (Mu+1)/2; i++){MM.push(i);}
-		for(var i = M/2+1; i < M; i++){MM.push(i);}			
-
-		for(var i = 0; i < M; i ++){
-			var baseY = MU[i] * M;
-			var baseX = MM[i] * M;
-			for(var j = 0; j < M; j ++){
-				FYre[baseY + MU[j]] = FXre[baseX + j]*Mu/M;
-				FYim[baseY + MU[j]] = FXim[baseX + j]*Mu/M;
-			}
-		}
-
+	if(Md % 2 == 0){
+		for(var i = 0; i < Md/2; i++){MM.push(i);}
+			MM.push(-1);
+		for(var i = M+1-Md/2; i < M; i++){MM.push(i);}
 
 	}else{
+		for(var i = 0; i < (Md+1)/2; i++){MM.push(i);}
+		for(var i = M+1-(Md+1)/2; i < M; i++){MM.push(i);}
+	}
 
+	console.log(MM);
 
-		for(var i = 0; i < M/2; i++){MU.push(i);}
-		for(var i = Mu+1-(M+1)/2; i < Mu; i++){MU.push(i);}
-
-
-		for(var i = 0; i < M; i ++){
-			var baseY = MU[i] * M;
-			var baseX = i * M;
-			for(var j = 0; j < M; j ++){
-				FYre[baseY + MU[j]] = FXre[baseX + j]*Mu/M;
-				FYim[baseY + MU[j]] = FXim[baseX + j]*Mu/M;
+	FYre = [];
+	FYim = [];
+	for(var i = 0; i < Md; i ++){
+		var base = MM[i] * M;
+		for(var j = 0; j < Md; j ++){
+			if(MM[i] == -1 || MM[j] == -1){
+				FYre.push(0);
+				FYim.push(0);
+				continue;
 			}
+			FYre.push(FXre[base + MM[j]]*M/Md);
+			FYim.push(FXim[base + MM[j]]*M/Md);
 		}
-
 	}
 
 
+	// return;
 
 
+	var DownSampled = ifft2d(FYre, FYim, Md);
+	DownSampled = clamp(DownSampled);
 
-	var UpSampled = ifft2d(FYre, FYim, Mu);
-	UpSampled = clamp(UpSampled);
-	console.log(UpSampled);
-
-	// FFT.ifft2d(what.re, what.im);
 
 
     // draw the pixels
@@ -176,15 +172,14 @@ function transformAction() {
       0, 0, dims[0], dims[1]
     );
     
-    var rate = dims[0] / Mu;
+    var rate = Md / dims[0];
     for (var k = 0; k < dims[1]; k++) {
       for (var l = 0; l < dims[0]; l++) {
         var idxInPixels = 4*(dims[0]*k + l);
         currImageData.data[idxInPixels+3] = 255; // full alpha
         // RGB are the same -> gray
         for (var c = 0; c < 3; c++) { // lol c++
-          // currImageData.data[idxInPixels+c] = UpSampled[Math.round(k*rate) * Mu + Math.round(l*rate)];
-          currImageData.data[idxInPixels+c] = UpSampled[k*dims[1] + l];
+          currImageData.data[idxInPixels+c] = DownSampled[Math.floor(k*rate) * Md + Math.floor(l*rate)];
           // currImageData.data[idxInPixels+c] = what.re[k*M + l];
         }
       }

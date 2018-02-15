@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Rotate</title>
+        <title>DownSample</title>
 
         <script type="text/javascript" src="../lib/jquery-1.10.2.min.js"></script>
         <script type="text/javascript" src="../lib/d3.v3.min.js"></script>
@@ -12,10 +12,10 @@
         <script src="../fft.js"></script>
         <script src="../greyImage.js"></script>
         <script src="../matlab.js"></script>
-        <script src="rotate.js"></script>
+        <script src="downsample.js"></script>
     </head>
     <body>
-        <h1>Rotate</h1>
+        <h1>DownSample</h1>
 
         <div>
             <div style="display: inline-block; margin-right: 22px; vertical-align: top">
@@ -24,11 +24,11 @@
                 <canvas id="canvas0"></canvas>
             </div>
             <div style="display: inline-block; vertical-align: top">
-                2. Rotated Image
+                2. DownSampled Image
                 <br>
                 <canvas id="canvas1"></canvas>
                 <br>
-                Theta: <input id="theta_selector" type="range" id="theta-selector" max="360" min="0" step="1" value=45><span id="theta_val" style="width: 20px; display: inline-block;">45</span>    
+                T: <input id="T_selector" type="range" id="T-selector" max="256" min="1" step="1" value="10"><span id="T_val" style="width: 20px; display: inline-block;">10</span>    
                 <br>               
                 <!-- <input type="button" id="transform-btn" value="Compute 2D DFT"> -->
             </div>
