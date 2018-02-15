@@ -134,10 +134,14 @@ function transformAction() {
 	for(var i = 0; i < I.length; i++){
 		var idx_X = SN*(I[i][0]) + I[i][1];
 		var idx_Y = SN*(J[i][0]-1) + J[i][1];
+
 		try{
-			Y[Math.floor(idx_Y/SN)][idx_Y%SN] = X[Math.floor(idx_X/SN)][idx_X%SN];
+			var row = idx_Y/SN;
+			row = Math.min(row, 361);
+			row = Math.max(row, 0);
+			Y[Math.floor(row)][idx_Y%SN] = X[Math.floor(idx_X/SN)][idx_X%SN];
 		}catch(e){
-			console.log(Math.floor(idx_Y/SN));
+			console.log(Math.floor(SN));
 			console.log(e);
 		}
 		
