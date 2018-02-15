@@ -13,6 +13,8 @@ var start;
 
 var greyImage;
 
+var Mu = 256;
+
 window.onload = function(){
 	init();
 }
@@ -38,12 +40,23 @@ var loadImage = function(loc){
 	img.addEventListener('load', function(){
 		dims[0] = img.width;
 		dims[1] = img.height;
-		for( var i = 0; i < 2; i++){
-			canvases[i] = $s('#canvas' + i);
-			canvases[i].width = dims[0];
-			canvases[i].height = dims[1];
-			ctxs[i] = canvases[i].getContext('2d');
-		}
+		// for( var i = 0; i < 2; i++){
+		// 	canvases[i] = $s('#canvas' + i);
+		// 	canvases[i].width = dims[0];
+		// 	canvases[i].height = dims[1];
+		// 	ctxs[i] = canvases[i].getContext('2d');
+		// }
+
+		canvases[0] = $s('#canvas' + 0);
+		canvases[0].width = dims[0];
+		canvases[0].height = dims[1];
+		ctxs[0] = canvases[0].getContext('2d');		
+
+		canvases[1] = $s('#canvas' + 1);
+		canvases[1].width = 256;
+		canvases[1].height = 256;
+		ctxs[1] = canvases[1].getContext('2d');	
+
 
 		ctxs[0].drawImage(img, 0, 0, img.width, img.height);
 
@@ -80,8 +93,8 @@ function transformAction() {
 
 	var X = greyImage.getData();
 	var M = dims[0];
-	// var Mu = $('#T_selector').val();
-	var Mu = 400;
+	Mu = $('#T_selector').val();
+	Mu = 256*Math.pow(2,Mu-1);
 
 	// FFT.init(dims[0]);
 
@@ -171,14 +184,20 @@ function transformAction() {
 	// FFT.ifft2d(what.re, what.im);
 
 
+
+
+    canvases[1].width = Mu;
+    canvases[1].height = Mu;
+    ctxs[1] = canvases[1].getContext('2d');
+    
     // draw the pixels
     var currImageData = ctxs[1].getImageData(
-      0, 0, dims[0], dims[1]
+      0, 0, Mu, Mu
     );
-    
-    var rate = dims[0] / Mu;
-    for (var k = 0; k < dims[1]; k++) {
-      for (var l = 0; l < dims[0]; l++) {
+
+    // var rate = dims[0] / Mu;
+    for (var k = 0; k < Mu; k++) {
+      for (var l = 0; l < Mu; l++) {
         var idxInPixels = 4*(dims[0]*k + l);
         currImageData.data[idxInPixels+3] = 255; // full alpha
         // RGB are the same -> gray

@@ -22,12 +22,10 @@ var init = function() {
 
 	$('#T_selector').bind('input',function(e){
       var x = parseInt($('#T_selector').val());
-      $('#T_val').html(x);
+      $('#T_val').html(Math.pow(2,x));
       start = +new Date();
       transformAction();
     });
-
-
 
 
     loadImage('clown.png');
@@ -91,24 +89,32 @@ function transformAction() {
 	var M = dims[0];
 
 	var Md = $('#T_selector').val();
-	// var Md = 5;
+	Md = Math.pow(2,Md);
+	// var Md = 16;
 
 	// FFT.init(dims[0]);
 
-	var FXre = new Array(dims[0] * dims[1]);
-	var FXim = new Array(dims[0] * dims[1]);
+	// var FXre = new Array(dims[0] * dims[1]);
+	// var FXim = new Array(dims[0] * dims[1]);
 
-	FXre.fill(0.0);
-	FXim.fill(0.0);
+	// FXre.fill(0.0);
+	// FXim.fill(0.0);
 
-	var FX_idx = 0;
-	for( var y = 0; y < X.length; y++ ){
-		FX_idx = y * M;
-		for(var x = 0; x < X[0].length; x++){
-			FXre[FX_idx++] = X[y][x];
-		}
-	}
+	// var FX_idx = 0;
+	// for( var y = 0; y < X.length; y++ ){
+	// 	FX_idx = y * M;
+	// 	for(var x = 0; x < X[0].length; x++){
+	// 		FXre[FX_idx++] = X[y][x];
+	// 	}
+	// }
+
 	// console.log(FXre);
+
+	var FX = fft2d(X, M);
+	var FXre = FX.re;
+	var FXim = FX.im;
+
+	console.log(FXim);
 
 	// FFT.fft2d(FXre, FXim);
 
@@ -120,7 +126,6 @@ function transformAction() {
 	// console.log(what);
 	// return;
 
-	FFT.fft2d(FXre, FXim);
 
 
 
