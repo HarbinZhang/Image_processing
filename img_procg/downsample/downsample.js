@@ -20,9 +20,9 @@ window.onload = function(){
 var init = function() {
 	canvases = [], ctxs = [];
 
-	$('#T_selector').bind('input',function(e){
-      var x = parseInt($('#T_selector').val());
-      $('#T_val').html(Math.pow(2,x));
+	$('#Md_selector').bind('input',function(e){
+      var x = parseInt($('#Md_selector').val());
+      $('#Md_val').html(Math.pow(2,x));
       start = +new Date();
       transformAction();
     });
@@ -88,7 +88,7 @@ function transformAction() {
 	var X = greyImage.getData();
 	var M = dims[0];
 
-	var Md = $('#T_selector').val();
+	var Md = $('#Md_selector').val();
 	Md = Math.pow(2,Md);
 	// var Md = 16;
 
