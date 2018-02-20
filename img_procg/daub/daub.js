@@ -32,6 +32,15 @@ var init = function() {
     });
 
 
+    $('#lambda_selector').bind('input',function(e){
+      var x = parseInt($('#lambda_selector').val());
+      $('#lambda_val').html(x);
+      start = +new Date();
+      transformAction();
+      // reconstructAction();
+    });
+
+
     loadImage('clown.png');
 
 
@@ -87,10 +96,17 @@ var loadImage = function(loc){
 function transformAction() {
 
 	var sigma = $('#sigma_selector').val();
+	var lambda = $('#lambda_selector').val();
 	X = greyImage.getData();
 
-	var sigma = 0;
-	var lambda = 0;
+	// X = [];
+	// for(var i = 1; i < 257; i++){
+	// 	var temp = [];
+	// 	for(var j = 1; j < 257; j++){
+	// 		temp.push(j);
+	// 	}
+	// 	X.push(temp);
+	// }
 
 	var N = dims[0];
 	var Y = X + randn(N, N, sigma);
@@ -113,6 +129,7 @@ function transformAction() {
 	var XXLL0 = prePadding(X, X[0].length - L + 1, X[0].length);
  
 
+
 	var XLL1 = matrix_add(matrix_add(subColumnScale(XXLL0, L-1, XXLL0[0].length-1, 2, G[0]),
 				subColumnScale(XXLL0, L-2, XXLL0[0].length-2, 2, G[1])),
 				subColumnScale(XXLL0, L-3, XXLL0[0].length-3, 2, G[2]));
@@ -120,15 +137,14 @@ function transformAction() {
 	XLL1 = matrix_add(XLL1, subColumnScale(XXLL0, L-5, XXLL0[0].length-5, 2, G[4]));
 	XLL1 = matrix_add(XLL1, subColumnScale(XXLL0, L-6, XXLL0[0].length-6, 2, G[5]));
 
+
+
 	var XHH1 = matrix_add(matrix_add(subColumnScale(XXLL0, L-1, XXLL0[0].length-1, 2, H[0]),
 				subColumnScale(XXLL0, L-2, XXLL0[0].length-2, 2, H[1])),
 				subColumnScale(XXLL0, L-3, XXLL0[0].length-3, 2, H[2]));
-
 	XHH1 = matrix_add(XHH1, subColumnScale(XXLL0, L-4, XXLL0[0].length-4, 2, H[3]));
 	XHH1 = matrix_add(XHH1, subColumnScale(XXLL0, L-5, XXLL0[0].length-5, 2, H[4]));
 	XHH1 = matrix_add(XHH1, subColumnScale(XXLL0, L-6, XXLL0[0].length-6, 2, H[5]));
-
-
 
 
 	XLL1 = transpose(XLL1);
@@ -148,13 +164,14 @@ function transformAction() {
 
 
 	// may be problem
-	XHH1 = matrix_add(matrix_add(subColumnScale(XXLL1, L-1, XXLL1[0].length-1, 2, H[0]),
-				subColumnScale(XXLL1, L-2, XXLL1[0].length-2, 2, H[1])),
-				subColumnScale(XXLL1, L-3, XXLL1[0].length-3, 2, H[2]));
+	XHH1 = matrix_add(matrix_add(subColumnScale(XXHH1, L-1, XXHH1[0].length-1, 2, H[0]),
+				subColumnScale(XXHH1, L-2, XXHH1[0].length-2, 2, H[1])),
+				subColumnScale(XXHH1, L-3, XXHH1[0].length-3, 2, H[2]));
 
-	XHH1 = matrix_add(XHH1, subColumnScale(XXLL1, L-4, XXLL1[0].length-4, 2, H[3]));
-	XHH1 = matrix_add(XHH1, subColumnScale(XXLL1, L-5, XXLL1[0].length-5, 2, H[4]));
-	XHH1 = matrix_add(XHH1, subColumnScale(XXLL1, L-6, XXLL1[0].length-6, 2, H[5]));
+	XHH1 = matrix_add(XHH1, subColumnScale(XXHH1, L-4, XXHH1[0].length-4, 2, H[3]));
+	XHH1 = matrix_add(XHH1, subColumnScale(XXHH1, L-5, XXHH1[0].length-5, 2, H[4]));
+	XHH1 = matrix_add(XHH1, subColumnScale(XXHH1, L-6, XXHH1[0].length-6, 2, H[5]));
+
 
 
 
@@ -181,6 +198,9 @@ function transformAction() {
 	XLH1 = transpose(XLH1);
 
 
+	// console.log(matrix_sum(XHH1));
+	// return;
+	// 2nd Stage db3 Daubechies Wavelet Transform:
 	XXLL1 = prePadding(XLL1, XLL1[0].length-L+1, XLL1[0].length);
 
 	var XLL2 = matrix_add(matrix_add(subColumnScale(XXLL1, L-1, XXLL1[0].length-1, 2, G[0]),
@@ -207,7 +227,7 @@ function transformAction() {
 	var XXLL2 = prePadding(XLL2, XLL2[0].length - L + 1, XLL2[0].length);
 	var XXHH2 = prePadding(XHH2, XHH2[0].length-L+1, XHH2[0].length);
 
-	var XLL2 = matrix_add(matrix_add(subColumnScale(XXLL2, L-1, XXLL2[0].length-1, 2, G[0]),
+	XLL2 = matrix_add(matrix_add(subColumnScale(XXLL2, L-1, XXLL2[0].length-1, 2, G[0]),
 				subColumnScale(XXLL2, L-2, XXLL2[0].length-2, 2, G[1])),
 				subColumnScale(XXLL2, L-3, XXLL2[0].length-3, 2, G[2]));
 	XLL2 = matrix_add(XLL2, subColumnScale(XXLL2, L-4, XXLL2[0].length-4, 2, G[3]));
@@ -215,7 +235,7 @@ function transformAction() {
 	XLL2 = matrix_add(XLL2, subColumnScale(XXLL2, L-6, XXLL2[0].length-6, 2, G[5]));
 
 
-	var XHH2 = matrix_add(matrix_add(subColumnScale(XXHH2, L-1, XXHH2[0].length-1, 2, H[0]),
+	XHH2 = matrix_add(matrix_add(subColumnScale(XXHH2, L-1, XXHH2[0].length-1, 2, H[0]),
 				subColumnScale(XXHH2, L-2, XXHH2[0].length-2, 2, H[1])),
 				subColumnScale(XXHH2, L-3, XXHH2[0].length-3, 2, H[2]));
 	XHH2 = matrix_add(XHH2, subColumnScale(XXHH2, L-4, XXHH2[0].length-4, 2, H[3]));
@@ -245,6 +265,9 @@ function transformAction() {
 	XLH2 = transpose(XLH2);
 
 
+	// console.log(matrix_sum(XHL2));
+	// return;
+
 	// 3rd Stage db3 Daubechies Wavelet Transform:
 	XXLL2 = prePadding(XLL2, XLL2[0].length - L + 1, XLL2[0].length);
 
@@ -267,6 +290,9 @@ function transformAction() {
 	XLL3 = transpose(XLL3);
 	XHH3 = transpose(XHH3);
 
+	// console.log(matrix_sum(XLL3));
+	// return;
+
 	var XXLL3 = prePadding(XLL3, XLL3[0].length-L+1, XLL3[0].length);
 	var XXHH3 = prePadding(XHH3, XHH3[0].length-L+1, XHH3[0].length);
 
@@ -286,6 +312,8 @@ function transformAction() {
 	XHH3 = matrix_add(XHH3, subColumnScale(XXHH3, L-5, XXHH3[0].length-5, 2, H[4]));
 	XHH3 = matrix_add(XHH3, subColumnScale(XXHH3, L-6, XXHH3[0].length-6, 2, H[5]));
 
+	// console.log(matrix_sum(XHH1));
+	// return;
 
  	var XHL3 = matrix_add(matrix_add(subColumnScale(XXLL3, L-1, XXLL3[0].length-1, 2, H[0]),
 				subColumnScale(XXLL3, L-2, XXLL3[0].length-2, 2, H[1])),
@@ -308,7 +336,8 @@ function transformAction() {
 	XHL3 = transpose(XHL3);
 	XLH3 = transpose(XLH3);
 
-	
+	// console.log(matrix_sum(XHL3));
+	// return;	
 
 // Wavelet Transform:{XLL3,XLH?,XHL?,XHH?,?=1,2,3}.
 // Display 2-D db3 Daubechies wavelet transform:
@@ -322,16 +351,21 @@ function transformAction() {
 		XX.push(XHL3[i].concat(XHH3[i]));
 	}
 
+
 	for(var i = 0; i < XX.length; i++){
-		XX[i].concat(XLH2[i]);
+		XX[i] = XX[i].concat(XLH2[i]);
 	}
 
 	for(var i = 0; i < XHL2.length; i++){
 		XX.push(XHL2[i].concat(XHH2[i]));
 	}
 
+ 	// console.log(matrix_sum(XX));
+ 	// return;	
+
+
 	for(var i = 0; i < XX.length; i++){
-		XX[i].concat(XLH1[i]);
+		XX[i] = XX[i].concat(XLH1[i]);
 	}
 
 	for(var i = 0; i < XHL1.length; i++){
@@ -339,6 +373,9 @@ function transformAction() {
 	}
 
 
+
+ 	// console.log(matrix_sum(XX));
+ 	// return;
 
     // draw the pixels
     var currImageData = ctxs[1].getImageData(
@@ -358,7 +395,7 @@ function transformAction() {
     ctxs[1].putImageData(currImageData, 0, 0);
  
     var duration = +new Date() - start;
-    console.log('It took '+duration+'ms to compute the FT.');
+    console.log('It took '+duration+'ms to compute the 2-D db3 wavelet wavelet.');
 
 
 
@@ -381,6 +418,9 @@ function transformAction() {
 	XHL3 = shrinkByT(XHL3, T);
 	XHH3 = shrinkByT(XHH3, T);
 
+	// console.log(matrix_sum(XHH1));
+ 	// return;	
+
 	// 3rd Stage Reconstruction:
 	var ZZLL3 = postPadding(XLL3, 0, 3);
 	var ZZLH3 = postPadding(XLH3, 0, 3);
@@ -391,6 +431,8 @@ function transformAction() {
 
 	
 	var A2 = reconstruct(K, G, G, ZZLL3);
+	// console.log(matrix_sum(A2));
+	// return;
 	var B2 = reconstruct(K, G, H, ZZHL3);
 	var C2 = reconstruct(K, H, G, ZZLH3);
 	var D2 = reconstruct(K, H, H, ZZHH3);
@@ -400,6 +442,7 @@ function transformAction() {
 	ZLL2 = matrix_add(ZLL2, D2);
 
 	ZLL2 = transpose(ZLL2);
+
 
 	var ZZLL2 = postPadding(ZLL2, 0, 3);
 	var ZZLH2 = postPadding(XLH2, 0, 3);
@@ -433,6 +476,9 @@ function transformAction() {
 	ZLL0 = transpose(ZLL0);
 
 
+
+	// console.log(matrix_sum(ZLL0));
+ // 	return;	
 
 	// // draw the pixels
 	var currImageData = ctxs[2].getImageData(
@@ -529,10 +575,12 @@ function shrinkByT(X, T){
 function reconstruct(K, G, H, ZZ){
 	var A = new Array(ZZ.length);
 	for(var i = 0; i < A.length; i++){
-		A[i] = new Array(ZZ[0].length-3);
+		// A[i] = new Array(ZZ[0].length-3);
+		A[i] = new Array(K);
+		A[i].fill(0);
 	}
 
-	for(var i = 0; i < A.length; i++){
+	for(var i = 0; i < ZZ.length; i++){
 		for(var j = 0; j*2 < K; j++){
 			A[i][j*2] = G[0]*ZZ[i][j] + G[2]*ZZ[i][j+1] + G[4]*ZZ[i][j+2];
 		}
@@ -540,19 +588,22 @@ function reconstruct(K, G, H, ZZ){
 			A[i][j*2+1] = G[1]*ZZ[i][j+1] + G[3]*ZZ[i][j+2] + G[5]*ZZ[i][j+3];
 		}
 	}
-	// console.log(matrix_sum(A));
+
 
 	A = transpose(A);
-	A = postPadding(A, 0, 3);
+	AA = postPadding(A, 0, 3);
 
-	for(var i = 0; i < A.length; i++){
+	// console.log(matrix_sum(AA));
+	for(var i = 0; i < AA.length; i++){
 		for(var j = 0; j*2 < K; j++){
-			A[i][j*2] = H[0]*A[i][j] + H[2]*A[i][j+1] + H[4]*A[i][j+2];
+			A[i][j*2] = H[0]*AA[i][j] + H[2]*AA[i][j+1] + H[4]*AA[i][j+2];
 		}
 		for(var j = 0; j*2+1 < K; j++){
-			A[i][j*2+1] = H[1]*A[i][j+1] + H[3]*A[i][j+2] + H[5]*A[i][j+3];
+			A[i][j*2+1] = H[1]*AA[i][j+1] + H[3]*AA[i][j+2] + H[5]*AA[i][j+3];
 		}
 	}
+
+	// console.log(A)
 
 	return A;
 }

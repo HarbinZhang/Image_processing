@@ -58,7 +58,7 @@ XLH1=G(1)*XXHH1(:,L:2:end-1)+G(2)*XXHH1(:,L-1:2:end-2)+G(3)*XXHH1(:,L-2:2:end-3)
 XLH1=XLH1+G(4)*XXHH1(:,L-3:2:end-4)+G(5)*XXHH1(:,L-4:2:end-5)+G(6)*XXHH1(:,L-5:2:end-6);
 XLL1=XLL1';XHH1=XHH1';XHL1=XHL1';XLH1=XLH1';
 
- 
+
 %2nd Stage db3 Daubechies Wavelet Transform:
 XXLL1=[XLL1(:,end-L+2:end) XLL1];%Cyclic Pre-padding
 XLL2=G(1)*XXLL1(:,L:2:end-1)+G(2)*XXLL1(:,L-1:2:end-2)+G(3)*XXLL1(:,L-2:2:end-3);
@@ -76,7 +76,6 @@ XHL2=XHL2+H(4)*XXLL2(:,L-3:2:end-4)+H(5)*XXLL2(:,L-4:2:end-5)+H(6)*XXLL2(:,L-5:2
 XLH2=G(1)*XXHH2(:,L:2:end-1)+G(2)*XXHH2(:,L-1:2:end-2)+G(3)*XXHH2(:,L-2:2:end-3);
 XLH2=XLH2+G(4)*XXHH2(:,L-3:2:end-4)+G(5)*XXHH2(:,L-4:2:end-5)+G(6)*XXHH2(:,L-5:2:end-6);
 XLL2=XLL2';XHH2=XHH2';XHL2=XHL2';XLH2=XLH2';
-
 %3rd Stage db3 Daubechies Wavelet Transform:
 XXLL2=[XLL2(:,end-L+2:end) XLL2];%Cyclic Pre-padding
 XLL3=G(1)*XXLL2(:,L:2:end-1)+G(2)*XXLL2(:,L-1:2:end-2)+G(3)*XXLL2(:,L-2:2:end-3);
@@ -84,16 +83,11 @@ XLL3=XLL3+G(4)*XXLL2(:,L-3:2:end-4)+G(5)*XXLL2(:,L-4:2:end-5)+G(6)*XXLL2(:,L-5:2
 XHH3=H(1)*XXLL2(:,L:2:end-1)+H(2)*XXLL2(:,L-1:2:end-2)+H(3)*XXLL2(:,L-2:2:end-3);
 XHH3=XHH3+H(4)*XXLL2(:,L-3:2:end-4)+H(5)*XXLL2(:,L-4:2:end-5)+H(6)*XXLL2(:,L-5:2:end-6);
 XLL3=XLL3';XHH3=XHH3';%Now Do in the Other Direction:
-
-
 XXLL3=[XLL3(:,end-L+2:end) XLL3];XXHH3=[XHH3(:,end-L+2:end) XHH3];%Cyclic Pre-padding
 XLL3=G(1)*XXLL3(:,L:2:end-1)+G(2)*XXLL3(:,L-1:2:end-2)+G(3)*XXLL3(:,L-2:2:end-3);
 XLL3=XLL3+G(4)*XXLL3(:,L-3:2:end-4)+G(5)*XXLL3(:,L-4:2:end-5)+G(6)*XXLL3(:,L-5:2:end-6);
 XHH3=H(1)*XXHH3(:,L:2:end-1)+H(2)*XXHH3(:,L-1:2:end-2)+H(3)*XXHH3(:,L-2:2:end-3);
 XHH3=XHH3+H(4)*XXHH3(:,L-3:2:end-4)+H(5)*XXHH3(:,L-4:2:end-5)+H(6)*XXHH3(:,L-5:2:end-6);
-
-
-
 XHL3=H(1)*XXLL3(:,L:2:end-1)+H(2)*XXLL3(:,L-1:2:end-2)+H(3)*XXLL3(:,L-2:2:end-3);
 XHL3=XHL3+H(4)*XXLL3(:,L-3:2:end-4)+H(5)*XXLL3(:,L-4:2:end-5)+H(6)*XXLL3(:,L-5:2:end-6);
 XLH3=G(1)*XXHH3(:,L:2:end-1)+G(2)*XXHH3(:,L-1:2:end-2)+G(3)*XXHH3(:,L-2:2:end-3);
@@ -104,14 +98,11 @@ XLL3=XLL3';XHH3=XHH3';XHL3=XHL3';XLH3=XLH3';
 XX=[XLL3 XLH3;XHL3 XHH3];
 
 
-XX=[XX XLH2;XHL2 XHH2];
+XX=[XX XLH2;XHL2 XHH2];XX=[XX XLH1;XHL1 XHH1];
 
 
-XX=[XX XLH1;XHL1 XHH1];
-
-
-% figure,imagesc((abs(XX))),colormap(gray),axis off,title('2-D db3 wavelet transform')
-
+figure,imagesc((abs(XX))),colormap(gray),axis off,title('2-D db3 wavelet transform')
+return;
 %Inverse Wavelet Transform of {XLL3,XLH?,XHL?,XHH?}
 %Threshold and shrinkage of noisy wavelet transform for denoising:
 %First, threshold small values of XLH?,XHL?,XHH? to 0.
@@ -129,10 +120,6 @@ XHH1(XHH1<-T)=XHH1(XHH1<-T)+T;XLH2(XLH2<-T)=XLH2(XLH2<-T)+T;
 XHL2(XHL2<-T)=XHL2(XHL2<-T)+T;XHH2(XHH2<-T)=XHH2(XHH2<-T)+T;
 XLH3(XLH3<-T)=XLH3(XLH3<-T)+T;XHL3(XHL3<-T)=XHL3(XHL3<-T)+T;
 XHH3(XHH3<-T)=XHH3(XHH3<-T)+T;LL=length(find(abs(XX<0.000001)));
-
-
-
-
 %Inverse Wavelet Transform of {XLL3,XLH?,XHL?,XHH?}
 %3rd Stage Reconstruction:
 ZZLL3=[XLL3 XLL3(:,1:3)];ZZLH3=[XLH3 XLH3(:,1:3)];
@@ -144,6 +131,7 @@ A2(:,2:2:K)=G(2)*ZZLL3(:,2:end-2)+G(4)*ZZLL3(:,3:end-1)+G(6)*ZZLL3(:,4:end);
 A2=A2';AA2=[A2 A2(:,1:3)];%Now Do in the Other Direction:
 A2(:,1:2:K)=G(1)*AA2(:,1:end-3)+G(3)*AA2(:,2:end-2)+G(5)*AA2(:,3:end-1);
 A2(:,2:2:K)=G(2)*AA2(:,2:end-2)+G(4)*AA2(:,3:end-1)+G(6)*AA2(:,4:end);
+
 
 B2(:,1:2:K)=G(1)*ZZHL3(:,1:end-3)+G(3)*ZZHL3(:,2:end-2)+G(5)*ZZHL3(:,3:end-1);
 B2(:,2:2:K)=G(2)*ZZHL3(:,2:end-2)+G(4)*ZZHL3(:,3:end-1)+G(6)*ZZHL3(:,4:end);
@@ -166,7 +154,7 @@ D2(:,1:2:K)=H(1)*DD2(:,1:end-3)+H(3)*DD2(:,2:end-2)+H(5)*DD2(:,3:end-1);
 D2(:,2:2:K)=H(2)*DD2(:,2:end-2)+H(4)*DD2(:,3:end-1)+H(6)*DD2(:,4:end);
 
 
-ZLL2=A2+B2+C2+D2;Z5LL2=ZLL2';
+ZLL2=A2+B2+C2+D2;ZLL2=ZLL2';
 %2nd Stage Reconstruction: Use Computed ZLL2 and Given X??2:
 ZZLL2=[ZLL2 ZLL2(:,1:3)];ZZLH2=[XLH2 XLH2(:,1:3)];
 ZZHL2=[XHL2 XHL2(:,1:3)];ZZHH2=[XHH2 XHH2(:,1:3)];
