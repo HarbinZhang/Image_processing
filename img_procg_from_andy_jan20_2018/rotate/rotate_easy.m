@@ -17,7 +17,7 @@ IS=(N+1)/2;
 JS=round(IS*sqrt(2));
 I=I-IS;
 J=round(I*A);
-I=I+IS
+I=I+IS;
 J=J+JS;%center image for rotation about its center.
 Y(SN*(J(:,1)-1)+J(:,2))=X(SN*(I(:,1)-1)+I(:,2));%Nearest-neighbor interpolation.
 % figure,imagesc(Y),colormap(gray),axis off,title('Rotated image')

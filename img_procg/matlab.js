@@ -1,4 +1,18 @@
 
+function norm(N){
+    var res = 0;
+    for(var i = 0; i < N.length; i++){
+        if(N[i] instanceof Array){
+            for(var j = 0; j < N[i].length; j++){
+                res+= N[i][j] * N[i][j];
+            }
+        }else{
+            res += N[i] * N[i];
+        }
+    }
+    return Math.sqrt(res);
+}
+
 
 function zeroPad(X, M, N){
     var M0 = X.length;
@@ -152,9 +166,9 @@ function matrix_add(M, N){
     if(N == null || N.length == 0 || N[0].length == 0){return null;}    
 
     var res = [];
-    for(var i = 0; i < M[0].length; i++){
+    for(var i = 0; i < M.length; i++){
         var temp = [];
-        for(var j = 0; j < M.length; j++){
+        for(var j = 0; j < M[0].length; j++){
             temp.push(M[i][j] + N[i][j]);
         }
         res.push(temp);
@@ -165,8 +179,8 @@ function matrix_add(M, N){
 function matrix_sum(M){
     if(M == null || M.length == 0 || M[0].length == 0){return null;}
     var res = 0;
-    for(var i = 0; i < M[0].length; i++){
-        for(var j = 0; j < M.length; j++){
+    for(var i = 0; i < M.length; i++){
+        for(var j = 0; j < M[0].length; j++){
             res += M[i][j];
         }
     }

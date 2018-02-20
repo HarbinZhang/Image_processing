@@ -3,31 +3,52 @@
 %OPTIONS: Add 0-mean white Gaussian noise with strength sigma, and denoise image by
 %thresholding and shrinkage with lambda. Set sigma=0 and lambda=0 if don't want this.
 %Image must be square (or zero-pad) and have size a multiple of 8 (3 levels).
-clear;X=imread('clown.jpg');X=double(X);sigma=0;lambda=0;
+clear;X=imread('clown.png');X=double(X);sigma=0;lambda=0;
 N=size(X,1);Y=X+sigma*randn(N,N);T=lambda;%"T" takes less space than "lambda."
-%T=threshold for XLH?,XHL?,XHH? (not XLL3).
-figure,imagesc(X),colormap(gray),axis off,title('Original image')
+ %T=threshold for XLH?,XHL?,XHH? (not XLL3).
+% figure,imagesc(X),colormap(gray),axis off,title('Original image')
 %db3 Daubechies Scaling Function Coefficients (from table):
 G=[0.47046721,1.14111692,0.650365];
 G=[G -0.19093442,-0.12083221,0.0498175];
+
 G=G/norm(G);L=length(G);H=fliplr(G).*(-1).^[0:L-1];
+
+% X=X(:,:,1);
+X=(X(:,:,1)+X(:,:,2)+X(:,:,3))/3;
 %1st Stage db3 Daubechies Wavelet Transform:
 XXLL0=[X(:,end-L+2:end) X];%Cyclic Pre-padding
+
 XLL1=G(1)*XXLL0(:,L:2:end-1)+G(2)*XXLL0(:,L-1:2:end-2)+G(3)*XXLL0(:,L-2:2:end-3);
+
 XLL1=XLL1+G(4)*XXLL0(:,L-3:2:end-4)+G(5)*XXLL0(:,L-4:2:end-5)+G(6)*XXLL0(:,L-5:2:end-6);
 XHH1=H(1)*XXLL0(:,L:2:end-1)+H(2)*XXLL0(:,L-1:2:end-2)+H(3)*XXLL0(:,L-2:2:end-3);
 XHH1=XHH1+H(4)*XXLL0(:,L-3:2:end-4)+H(5)*XXLL0(:,L-4:2:end-5)+H(6)*XXLL0(:,L-5:2:end-6);
+
 XLL1=XLL1';XHH1=XHH1';%Now Do in the Other Direction:
+
+
 XXLL1=[XLL1(:,end-L+2:end) XLL1];XXHH1=[XHH1(:,end-L+2:end) XHH1];%Cyclic Pre-padding
+
+
 XLL1=G(1)*XXLL1(:,L:2:end-1)+G(2)*XXLL1(:,L-1:2:end-2)+G(3)*XXLL1(:,L-2:2:end-3);
+
+
 XLL1=XLL1+G(4)*XXLL1(:,L-3:2:end-4)+G(5)*XXLL1(:,L-4:2:end-5)+G(6)*XXLL1(:,L-5:2:end-6);
+
 XHH1=H(1)*XXHH1(:,L:2:end-1)+H(2)*XXHH1(:,L-1:2:end-2)+H(3)*XXHH1(:,L-2:2:end-3);
 XHH1=XHH1+H(4)*XXHH1(:,L-3:2:end-4)+H(5)*XXHH1(:,L-4:2:end-5)+H(6)*XXHH1(:,L-5:2:end-6);
+
+
 XHL1=H(1)*XXLL1(:,L:2:end-1)+H(2)*XXLL1(:,L-1:2:end-2)+H(3)*XXLL1(:,L-2:2:end-3);
 XHL1=XHL1+H(4)*XXLL1(:,L-3:2:end-4)+H(5)*XXLL1(:,L-4:2:end-5)+H(6)*XXLL1(:,L-5:2:end-6);
+
+
+
 XLH1=G(1)*XXHH1(:,L:2:end-1)+G(2)*XXHH1(:,L-1:2:end-2)+G(3)*XXHH1(:,L-2:2:end-3);
 XLH1=XLH1+G(4)*XXHH1(:,L-3:2:end-4)+G(5)*XXHH1(:,L-4:2:end-5)+G(6)*XXHH1(:,L-5:2:end-6);
 XLL1=XLL1';XHH1=XHH1';XHL1=XHL1';XLH1=XLH1';
+
+
 %2nd Stage db3 Daubechies Wavelet Transform:
 XXLL1=[XLL1(:,end-L+2:end) XLL1];%Cyclic Pre-padding
 XLL2=G(1)*XXLL1(:,L:2:end-1)+G(2)*XXLL1(:,L-1:2:end-2)+G(3)*XXLL1(:,L-2:2:end-3);
@@ -64,7 +85,12 @@ XLH3=XLH3+G(4)*XXHH3(:,L-3:2:end-4)+G(5)*XXHH3(:,L-4:2:end-5)+G(6)*XXHH3(:,L-5:2
 XLL3=XLL3';XHH3=XHH3';XHL3=XHL3';XLH3=XLH3';
 %Wavelet Transform:{XLL3,XLH?,XHL?,XHH?,?=1,2,3}.
 %Display 2-D db3 Daubechies wavelet transform:
-XX=[XLL3 XLH3;XHL3 XHH3];XX=[XX XLH2;XHL2 XHH2];XX=[XX XLH1;XHL1 XHH1];
+XX=[XLL3 XLH3;XHL3 XHH3];
+
+
+XX=[XX XLH2;XHL2 XHH2];XX=[XX XLH1;XHL1 XHH1];
+
+return;
 figure,imagesc((abs(XX))),colormap(gray),axis off,title('2-D db3 wavelet transform')
 %Inverse Wavelet Transform of {XLL3,XLH?,XHL?,XHH?}
 %Threshold and shrinkage of noisy wavelet transform for denoising:
@@ -88,30 +114,41 @@ XHH3(XHH3<-T)=XHH3(XHH3<-T)+T;LL=length(find(abs(XX<0.000001)));
 ZZLL3=[XLL3 XLL3(:,1:3)];ZZLH3=[XLH3 XLH3(:,1:3)];
 ZZHL3=[XHL3 XHL3(:,1:3)];ZZHH3=[XHH3 XHH3(:,1:3)];
 K=2*size(XLL3,1);
+
 A2(:,1:2:K)=G(1)*ZZLL3(:,1:end-3)+G(3)*ZZLL3(:,2:end-2)+G(5)*ZZLL3(:,3:end-1);
 A2(:,2:2:K)=G(2)*ZZLL3(:,2:end-2)+G(4)*ZZLL3(:,3:end-1)+G(6)*ZZLL3(:,4:end);
 A2=A2';AA2=[A2 A2(:,1:3)];%Now Do in the Other Direction:
 A2(:,1:2:K)=G(1)*AA2(:,1:end-3)+G(3)*AA2(:,2:end-2)+G(5)*AA2(:,3:end-1);
 A2(:,2:2:K)=G(2)*AA2(:,2:end-2)+G(4)*AA2(:,3:end-1)+G(6)*AA2(:,4:end);
+
+
 B2(:,1:2:K)=G(1)*ZZHL3(:,1:end-3)+G(3)*ZZHL3(:,2:end-2)+G(5)*ZZHL3(:,3:end-1);
 B2(:,2:2:K)=G(2)*ZZHL3(:,2:end-2)+G(4)*ZZHL3(:,3:end-1)+G(6)*ZZHL3(:,4:end);
 B2=B2';BB2=[B2 B2(:,1:3)];%Now Do in the Other Direction:
 B2(:,1:2:K)=H(1)*BB2(:,1:end-3)+H(3)*BB2(:,2:end-2)+H(5)*BB2(:,3:end-1);
 B2(:,2:2:K)=H(2)*BB2(:,2:end-2)+H(4)*BB2(:,3:end-1)+H(6)*BB2(:,4:end);
+
+
 C2(:,1:2:K)=H(1)*ZZLH3(:,1:end-3)+H(3)*ZZLH3(:,2:end-2)+H(5)*ZZLH3(:,3:end-1);
 C2(:,2:2:K)=H(2)*ZZLH3(:,2:end-2)+H(4)*ZZLH3(:,3:end-1)+H(6)*ZZLH3(:,4:end);
 C2=C2';CC2=[C2 C2(:,1:3)];%Now Do in the Other Direction:
 C2(:,1:2:K)=G(1)*CC2(:,1:end-3)+G(3)*CC2(:,2:end-2)+G(5)*CC2(:,3:end-1);
 C2(:,2:2:K)=G(2)*CC2(:,2:end-2)+G(4)*CC2(:,3:end-1)+G(6)*CC2(:,4:end);
+
+
 D2(:,1:2:K)=H(1)*ZZHH3(:,1:end-3)+H(3)*ZZHH3(:,2:end-2)+H(5)*ZZHH3(:,3:end-1);
 D2(:,2:2:K)=H(2)*ZZHH3(:,2:end-2)+H(4)*ZZHH3(:,3:end-1)+H(6)*ZZHH3(:,4:end);
 D2=D2';DD2=[D2 D2(:,1:3)];%Now Do in the Other Direction:
 D2(:,1:2:K)=H(1)*DD2(:,1:end-3)+H(3)*DD2(:,2:end-2)+H(5)*DD2(:,3:end-1);
 D2(:,2:2:K)=H(2)*DD2(:,2:end-2)+H(4)*DD2(:,3:end-1)+H(6)*DD2(:,4:end);
+
+
 ZLL2=A2+B2+C2+D2;ZLL2=ZLL2';
 %2nd Stage Reconstruction: Use Computed ZLL2 and Given X??2:
 ZZLL2=[ZLL2 ZLL2(:,1:3)];ZZLH2=[XLH2 XLH2(:,1:3)];
 ZZHL2=[XHL2 XHL2(:,1:3)];ZZHH2=[XHH2 XHH2(:,1:3)];
+
+
 K=2*size(ZLL2,1);
 A1(:,1:2:K)=G(1)*ZZLL2(:,1:end-3)+G(3)*ZZLL2(:,2:end-2)+G(5)*ZZLL2(:,3:end-1);
 A1(:,2:2:K)=G(2)*ZZLL2(:,2:end-2)+G(4)*ZZLL2(:,3:end-1)+G(6)*ZZLL2(:,4:end);
@@ -159,6 +196,11 @@ D0=D0';DD0=[D0 D0(:,1:3)];%Now Do in the Other Direction:
 D0(:,1:2:K)=H(1)*DD0(:,1:end-3)+H(3)*DD0(:,2:end-2)+H(5)*DD0(:,3:end-1);
 D0(:,2:2:K)=H(2)*DD0(:,2:end-2)+H(4)*DD0(:,3:end-1)+H(6)*DD0(:,4:end);
 ZLL0=A0+B0+C0+D0;ZLL0=ZLL0';
-figure,imagesc(ZLL0),colormap(gray),axis off,title('Reconstructed image')
+
+% return;
+%figure,imagesc(ZLL0),colormap(gray),axis off,title('Reconstructed image')
+
+
+
 
 
