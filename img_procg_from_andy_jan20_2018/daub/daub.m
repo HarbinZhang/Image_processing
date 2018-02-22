@@ -4,10 +4,10 @@
 %thresholding and shrinkage with lambda. Set sigma=0 and lambda=0 if don't want this.
 %Image must be square (or zero-pad) and have size a multiple of 8 (3 levels).
 clear;
-% X=imread('clown.png');
-for i=1:256
-    X(1:256,i)=i;
-end
+X=imread('clown.png');
+% for i=1:256
+%     X(1:256,i)=i;
+% end
 X=double(X);sigma=0;lambda=0;
 N=size(X,1);Y=X+sigma*randn(N,N);T=lambda;%"T" takes less space than "lambda."
  %T=threshold for XLH?,XHL?,XHH? (not XLL3).
@@ -19,7 +19,7 @@ G=[G -0.19093442,-0.12083221,0.0498175];
 G=G/norm(G);L=length(G);H=fliplr(G).*(-1).^[0:L-1];
 
 % X=X(:,:,1);
-% X=(X(:,:,1)+X(:,:,2)+X(:,:,3))/3;
+X=(X(:,:,1)+X(:,:,2)+X(:,:,3))/3;
 %1st Stage db3 Daubechies Wavelet Transform:
 XXLL0=[X(:,end-L+2:end) X];%Cyclic Pre-padding
 
@@ -110,7 +110,7 @@ XX=[XX XLH2;XHL2 XHH2];
 XX=[XX XLH1;XHL1 XHH1];
 
 
-% figure,imagesc((abs(XX))),colormap(gray),axis off,title('2-D db3 wavelet transform')
+figure,imagesc((abs(XX))),colormap(gray),axis off,title('2-D db3 wavelet transform')
 
 %Inverse Wavelet Transform of {XLL3,XLH?,XHL?,XHH?}
 %Threshold and shrinkage of noisy wavelet transform for denoising:
@@ -218,10 +218,11 @@ D0(:,2:2:K)=H(2)*ZZHH1(:,2:end-2)+H(4)*ZZHH1(:,3:end-1)+H(6)*ZZHH1(:,4:end);
 D0=D0';DD0=[D0 D0(:,1:3)];%Now Do in the Other Direction:
 D0(:,1:2:K)=H(1)*DD0(:,1:end-3)+H(3)*DD0(:,2:end-2)+H(5)*DD0(:,3:end-1);
 D0(:,2:2:K)=H(2)*DD0(:,2:end-2)+H(4)*DD0(:,3:end-1)+H(6)*DD0(:,4:end);
-ZLL0=A0+B0+C0+D0;ZLL0=ZLL0';
+ZLL0=A0+B0+C0+D0;
+% ZLL0=ZLL0';
 
 % return;
-%figure,imagesc(ZLL0),colormap(gray),axis off,title('Reconstructed image')
+figure,imagesc(ZLL0),colormap(gray),axis off,title('Reconstructed image')
 
 
 

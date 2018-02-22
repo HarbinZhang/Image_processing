@@ -109,7 +109,7 @@ function transformAction() {
 	// }
 
 	var N = dims[0];
-	var Y = X + randn(N, N, sigma);
+	var Y = matrix_add(X, randn(N, N, sigma));
 
 	var T = lambda;
 
@@ -126,7 +126,8 @@ function transformAction() {
 	}
 
 
-	var XXLL0 = prePadding(X, X[0].length - L + 1, X[0].length);
+	// var XXLL0 = prePadding(X, X[0].length - L + 1, X[0].length);
+	var XXLL0 = prePadding(Y, Y[0].length - L + 1, Y[0].length);
  
 
 
