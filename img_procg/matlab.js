@@ -1,4 +1,30 @@
 
+
+function matrix_append_horizontal(X, Y){
+    var res = [];
+    if(X.length != Y.length){return null;}
+    for(var i = 0; i < X.length; i++){
+        res.push(X[i].concat(Y[i]));
+    }
+    return res;
+}
+
+
+function matrix_append_vertical(X, Y){
+    var res = X
+    if(X[0].length != Y[0].length){return null;}
+
+    // for(var i = 0; i < X.length; i++){
+    //     res.push(X[i]);
+    // }    
+
+    for(var i = 0; i < Y.length; i++){
+        res.push(Y[i]);
+    }
+    return res;
+}
+
+
 function norm(N){
     var res = 0;
     for(var i = 0; i < N.length; i++){
