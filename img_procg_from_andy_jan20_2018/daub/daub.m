@@ -36,6 +36,8 @@ XHH1=XHH1+H(4)*XXLL0(:,L-3:2:end-4)+H(5)*XXLL0(:,L-4:2:end-5)+H(6)*XXLL0(:,L-5:2
 XLL1=XLL1';XHH1=XHH1';%Now Do in the Other Direction:
 
 
+
+
 XXLL1=[XLL1(:,end-L+2:end) XLL1];XXHH1=[XHH1(:,end-L+2:end) XHH1];%Cyclic Pre-padding
 
 

@@ -1,3 +1,26 @@
+function matrix_max(X){
+    var res = X[0][0];
+    for(var i = 0; i < X.length; i++){
+        for( var j = 0; j < X[0].length; j++){
+            res = Math.max(X[i][j], res);
+        }
+    }
+    return res;
+}
+
+
+
+function matrix_min(X){
+    var res = X[0][0];
+    for(var i = 0; i < X.length; i++){
+        for( var j = 0; j < X[0].length; j++){
+            res = Math.min(X[i][j], res);
+        }
+    }
+    return res;
+}
+
+
 
 
 function matrix_append_horizontal(X, Y){
@@ -146,6 +169,20 @@ function ifft2d(FXre, FXim, len){
     }
 
     return res;
+}
+
+
+function matrix_dot_product(M, N){
+    if(M == null || M.length == 0 || M[0].length == 0){return null;}
+    if(N == null || N.length == 0 || N[0].length == 0){return null;}    
+    if(M[0].length != N[0].length || M.length != N.length){return null;}
+
+    for(var i =0 ; i < M.length; i++){
+        for(var j = 0; j < M[0].length; j++){
+            M[i][j] *= N[i][j];
+        }
+    }    
+    return M;
 }
 
 function matrix_multi(M, N){

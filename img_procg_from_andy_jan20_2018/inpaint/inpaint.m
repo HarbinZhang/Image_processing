@@ -2,14 +2,22 @@
 %using Iterative Shrinkage and Thresholding (IST) and db3 Daubechies wavelet transform.
 %Image must be square with size a multiple of 8 (otherwise zero-pad).
 %XHAT=image. Z=wavelet of XHAT. W=inverse wavelet of Z.lambda=lambda in IST algorithm.
-clear;X=imread('clown.jpg');X=double(X);
-lambda=0.01;IMAX=100;f=0.7;%number of IST iterations and fraction of pixel values known.
+clear;
+% X=imread('clown.jpg');
+% X=double(X);
+for i=1:256
+    X(1:256,i)=i;
+end
+lambda=0.01;
+IMAX=5;
+f=1;%number of IST iterations and fraction of pixel values known.
 X=(X-min(min(X)))/(max(max(X))-min(min(X)));
-figure,imagesc(X),colormap(gray),axis off,title('Original image')
+% figure,imagesc(X),colormap(gray),axis off,title('Original image')
 N=size(X,1);%Must be a multiple of 8 (3 stages of wavelet transform),if not,zero-pad.
 %Determine random locations of known pixels:
 f1=1-f;Q=rand(N,N);Q(Q<f1)=0;Q(Q>f1)=1;Y=X;Y=Y.*Q;WK(N,N)=0;
-figure,imagesc(Y),colormap(gray),axis off,title('Known pixel values')
+
+% figure,imagesc(Y),colormap(gray),axis off,title('Known pixel values')
 %db3 Daubechies Scaling Function Coefficients (from table):
 G=[0.47046721,1.14111692,0.650365];
 G=[G -0.19093442,-0.12083221,0.0498175];
@@ -18,6 +26,7 @@ G=G/norm(G);L=length(G);H=fliplr(G).*(-1).^[0:L-1];
 ZLL3=zeros(N/8,N/8);ZLH3=zeros(N/8,N/8);ZHL3=zeros(N/8,N/8);ZHH3=zeros(N/8,N/8);
 ZLL2=zeros(N/4,N/4);ZLH2=zeros(N/4,N/4);ZHL2=zeros(N/4,N/4);ZHH2=zeros(N/4,N/4);
 ZLL1=zeros(N/2,N/2);ZLH1=zeros(N/2,N/2);ZHL1=zeros(N/2,N/2);ZHH1=zeros(N/2,N/2);
+
 for I=1:IMAX;%Begin IST algorithm.
 %Landweber iteration:z^{k+1}=z^{k}+H'F'(y-FH'z^{k}).
 %H=Daubechies wavelet transform operator. F=Known. W=H'z^{k}=XHAT.
@@ -25,27 +34,40 @@ for I=1:IMAX;%Begin IST algorithm.
 %3rd Stage Reconstruction:
 ZZLL3=[ZLL3 ZLL3(:,1:3)];ZZLH3=[ZLH3 ZLH3(:,1:3)];
 ZZHL3=[ZHL3 ZHL3(:,1:3)];ZZHH3=[ZHH3 ZHH3(:,1:3)];
+
 K=2*size(ZLL3,1);clear A* B* C* D*%Need this!
 A2(:,1:2:K)=G(1)*ZZLL3(:,1:end-3)+G(3)*ZZLL3(:,2:end-2)+G(5)*ZZLL3(:,3:end-1);
 A2(:,2:2:K)=G(2)*ZZLL3(:,2:end-2)+G(4)*ZZLL3(:,3:end-1)+G(6)*ZZLL3(:,4:end);
+
 A2=A2';AA2=[A2 A2(:,1:3)];%Now Do in the Other Direction:
 A2(:,1:2:K)=G(1)*AA2(:,1:end-3)+G(3)*AA2(:,2:end-2)+G(5)*AA2(:,3:end-1);
 A2(:,2:2:K)=G(2)*AA2(:,2:end-2)+G(4)*AA2(:,3:end-1)+G(6)*AA2(:,4:end);
+
 B2(:,1:2:K)=G(1)*ZZHL3(:,1:end-3)+G(3)*ZZHL3(:,2:end-2)+G(5)*ZZHL3(:,3:end-1);
 B2(:,2:2:K)=G(2)*ZZHL3(:,2:end-2)+G(4)*ZZHL3(:,3:end-1)+G(6)*ZZHL3(:,4:end);
+
 B2=B2';BB2=[B2 B2(:,1:3)];%Now Do in the Other Direction:
+
 B2(:,1:2:K)=H(1)*BB2(:,1:end-3)+H(3)*BB2(:,2:end-2)+H(5)*BB2(:,3:end-1);
 B2(:,2:2:K)=H(2)*BB2(:,2:end-2)+H(4)*BB2(:,3:end-1)+H(6)*BB2(:,4:end);
+
 C2(:,1:2:K)=H(1)*ZZLH3(:,1:end-3)+H(3)*ZZLH3(:,2:end-2)+H(5)*ZZLH3(:,3:end-1);
 C2(:,2:2:K)=H(2)*ZZLH3(:,2:end-2)+H(4)*ZZLH3(:,3:end-1)+H(6)*ZZLH3(:,4:end);
+
 C2=C2';CC2=[C2 C2(:,1:3)];%Now Do in the Other Direction:
+
 C2(:,1:2:K)=G(1)*CC2(:,1:end-3)+G(3)*CC2(:,2:end-2)+G(5)*CC2(:,3:end-1);
 C2(:,2:2:K)=G(2)*CC2(:,2:end-2)+G(4)*CC2(:,3:end-1)+G(6)*CC2(:,4:end);
+
 D2(:,1:2:K)=H(1)*ZZHH3(:,1:end-3)+H(3)*ZZHH3(:,2:end-2)+H(5)*ZZHH3(:,3:end-1);
 D2(:,2:2:K)=H(2)*ZZHH3(:,2:end-2)+H(4)*ZZHH3(:,3:end-1)+H(6)*ZZHH3(:,4:end);
+
 D2=D2';DD2=[D2 D2(:,1:3)];%Now Do in the Other Direction:
+
 D2(:,1:2:K)=H(1)*DD2(:,1:end-3)+H(3)*DD2(:,2:end-2)+H(5)*DD2(:,3:end-1);
 D2(:,2:2:K)=H(2)*DD2(:,2:end-2)+H(4)*DD2(:,3:end-1)+H(6)*DD2(:,4:end);
+
+
 WLL2=A2+B2+C2+D2;WLL2=WLL2';
 %2nd Stage Reconstruction: Use Computed ZLL2 and Given X??2:
 ZZLL2=[WLL2 WLL2(:,1:3)];ZZLH2=[ZLH2 ZLH2(:,1:3)];
@@ -99,15 +121,21 @@ D0(:,2:2:K)=H(2)*DD0(:,2:end-2)+H(4)*DD0(:,3:end-1)+H(6)*DD0(:,4:end);
 WLL0=A0+B0+C0+D0;W=WLL0';
 %End inverse wavelet transform:Z->W
 KK=find(Q==1);WK(KK)=W(KK);YWK=Y-WK;%D=F'(y-FH'z^{k}).%%%%%%%%%%%%
+
+
 %HF'(y-FH'z^{k})=HF'(FD)=HD=H(YWK).
 %Now wavelet transform of YWK:{X???}
 %1st Stage db3 Daubechies Wavelet Transform:
+
 XXLL0=[YWK(:,end-L+2:end) YWK];%Cyclic Pre-padding
 XLL1=G(1)*XXLL0(:,L:2:end-1)+G(2)*XXLL0(:,L-1:2:end-2)+G(3)*XXLL0(:,L-2:2:end-3);
 XLL1=XLL1+G(4)*XXLL0(:,L-3:2:end-4)+G(5)*XXLL0(:,L-4:2:end-5)+G(6)*XXLL0(:,L-5:2:end-6);
+
 XHH1=H(1)*XXLL0(:,L:2:end-1)+H(2)*XXLL0(:,L-1:2:end-2)+H(3)*XXLL0(:,L-2:2:end-3);
 XHH1=XHH1+H(4)*XXLL0(:,L-3:2:end-4)+H(5)*XXLL0(:,L-4:2:end-5)+H(6)*XXLL0(:,L-5:2:end-6);
 XLL1=XLL1';XHH1=XHH1';%Now Do in the Other Direction:
+
+
 XXLL1=[XLL1(:,end-L+2:end) XLL1];XXHH1=[XHH1(:,end-L+2:end) XHH1];%Cyclic Pre-padding
 XLL1=G(1)*XXLL1(:,L:2:end-1)+G(2)*XXLL1(:,L-1:2:end-2)+G(3)*XXLL1(:,L-2:2:end-3);
 XLL1=XLL1+G(4)*XXLL1(:,L-3:2:end-4)+G(5)*XXLL1(:,L-4:2:end-5)+G(6)*XXLL1(:,L-5:2:end-6);
@@ -118,6 +146,8 @@ XHL1=XHL1+H(4)*XXLL1(:,L-3:2:end-4)+H(5)*XXLL1(:,L-4:2:end-5)+H(6)*XXLL1(:,L-5:2
 XLH1=G(1)*XXHH1(:,L:2:end-1)+G(2)*XXHH1(:,L-1:2:end-2)+G(3)*XXHH1(:,L-2:2:end-3);
 XLH1=XLH1+G(4)*XXHH1(:,L-3:2:end-4)+G(5)*XXHH1(:,L-4:2:end-5)+G(6)*XXHH1(:,L-5:2:end-6);
 XLL1=XLL1';XHH1=XHH1';XHL1=XHL1';XLH1=XLH1';
+
+
 %2nd Stage db3 Daubechies Wavelet Transform:
 XXLL1=[XLL1(:,end-L+2:end) XLL1];%Cyclic Pre-padding
 XLL2=G(1)*XXLL1(:,L:2:end-1)+G(2)*XXLL1(:,L-1:2:end-2)+G(3)*XXLL1(:,L-2:2:end-3);
@@ -152,6 +182,7 @@ XHL3=XHL3+H(4)*XXLL3(:,L-3:2:end-4)+H(5)*XXLL3(:,L-4:2:end-5)+H(6)*XXLL3(:,L-5:2
 XLH3=G(1)*XXHH3(:,L:2:end-1)+G(2)*XXHH3(:,L-1:2:end-2)+G(3)*XXHH3(:,L-2:2:end-3);
 XLH3=XLH3+G(4)*XXHH3(:,L-3:2:end-4)+G(5)*XXHH3(:,L-4:2:end-5)+G(6)*XXHH3(:,L-5:2:end-6);
 XLL3=XLL3';XHH3=XHH3';XHL3=XHL3';XLH3=XLH3';
+
 %End wavelet transform of DYWK->X???.
 %z^{k+1}=z^{k}+HF'(y-FH'z^{k}):Now add z^{k}:
 ZLH1=ZLH1+XLH1;ZHL1=ZHL1+XHL1;ZHH1=ZHH1+XHH1;
@@ -176,6 +207,17 @@ ZHH2(abs(ZHH2)>lambda)=ZHH2(abs(ZHH2)>lambda)-lambda*sign(ZHH2(abs(ZHH2)>lambda)
 ZHH3(abs(ZHH3)>lambda)=ZHH3(abs(ZHH3)>lambda)-lambda*sign(ZHH3(abs(ZHH3)>lambda));
 ZLL3(abs(ZLL3)>lambda)=ZLL3(abs(ZLL3)>lambda)-lambda*sign(ZLL3(abs(ZLL3)>lambda));
 end;%Final inverse wavelet to get XHAT from Z:
+
+
+
+
+
+
+
+
+
+
+
 %Inverse Wavelet H'=H^{-1}:Z->W:
 %3rd Stage Reconstruction:
 ZZLL3=[ZLL3 ZLL3(:,1:3)];ZZLH3=[ZLH3 ZLH3(:,1:3)];
@@ -253,4 +295,4 @@ D0(:,1:2:K)=H(1)*DD0(:,1:end-3)+H(3)*DD0(:,2:end-2)+H(5)*DD0(:,3:end-1);
 D0(:,2:2:K)=H(2)*DD0(:,2:end-2)+H(4)*DD0(:,3:end-1)+H(6)*DD0(:,4:end);
 WLL0=A0+B0+C0+D0;XHAT=WLL0';
 %End inverse wavelet transform:Z->W=XHAT.
-figure,imagesc(XHAT),axis off,colormap(gray),title('Inpainted image')
+% figure,imagesc(XHAT),axis off,colormap(gray),title('Inpainted image')
