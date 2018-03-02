@@ -21,11 +21,19 @@ window.onload = function(){
 var init = function() {
 	canvases = [], ctxs = [];
 
+    $('#f_selector').bind('input',function(e){
+      var x = ($('#f_selector').val());
+      $('#f_val').html(x);
+      start = +new Date();
+      transformAction();
+      // reconstructAction();
+    });
 
 
-    $('#sigma_selector').bind('input',function(e){
-      var x = parseInt($('#sigma_selector').val());
-      $('#sigma_val').html(x);
+
+    $('#IMAX_selector').bind('input',function(e){
+      var x = parseInt($('#IMAX_selector').val());
+      $('#IMAX_val').html(x);
       start = +new Date();
       transformAction();
       // reconstructAction();
@@ -33,7 +41,7 @@ var init = function() {
 
 
     $('#lambda_selector').bind('input',function(e){
-      var x = parseInt($('#lambda_selector').val());
+      var x = ($('#lambda_selector').val());
       $('#lambda_val').html(x);
       start = +new Date();
       transformAction();
@@ -96,7 +104,6 @@ var loadImage = function(loc){
 function transformAction() {
 
 	// var sigma = parseInt($('#sigma_selector').val());
-	// var lambda = parseInt($('#lambda_selector').val());
 	X = greyImage.getData();
 
 	// X = [];
@@ -107,13 +114,16 @@ function transformAction() {
 	// 	}
 	// 	X.push(temp);
 	// }
-	// console.log(sigma,lambda);
-	var sigma = 20;
-	var lambda = 0.01;
+	
+
 	var IMAX = 5;
-	var f = 1;
+	var f = 0.7;
+	var lambda = 0.01;
+	var lambda = parseFloat($('#lambda_selector').val());
+	var f = parseFloat($('#f_selector').val());
+	var IMAX = parseInt($('#IMAX_selector').val());
 
-
+	console.log(lambda, f, IMAX);
 	// X=(X-min(min(X)))/(max(max(X))-min(min(X)));
 	var maxX = matrix_max(X);
 	var minX = matrix_min(X);
@@ -130,6 +140,32 @@ function transformAction() {
 		}
 	}
 	var Y = matrix_dot_product(X, Q);
+
+
+
+    // draw the pixels
+    var currImageData = ctxs[1].getImageData(
+      0, 0, dims[0], dims[1]
+    );
+    
+    for (var k = 0; k < dims[1]; k++) {
+      for (var l = 0; l < dims[0]; l++) {
+        var idxInPixels = 4*(dims[0]*k + l);
+        currImageData.data[idxInPixels+3] = 255; // full alpha
+        // RGB are the same -> gray
+        for (var c = 0; c < 3; c++) { // lol c++
+          currImageData.data[idxInPixels+c] = Math.round(Y[k][l]*255);
+        }
+      }
+    }
+    ctxs[1].putImageData(currImageData, 0, 0);
+ 
+    var duration = +new Date() - start;
+    console.log('It took '+duration+'ms to compute the Y.');
+
+
+
+
 
 	// console.log(matrix_sum(Y));
 	// return;
@@ -658,7 +694,7 @@ for( var I = 0; I < IMAX; I ++)
     ctxs[2].putImageData(currImageData, 0, 0);
  
     var duration = +new Date() - start;
-    console.log('It took '+duration+'ms to compute the 2-D db3 wavelet wavelet.');
+    console.log('It took '+duration+'ms to reconstruct this image.');
 
 
     return;

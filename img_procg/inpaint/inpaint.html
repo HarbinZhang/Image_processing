@@ -24,14 +24,17 @@
                 <canvas id="canvas0"></canvas>
             </div>
             <div style="display: inline-block; vertical-align: top">
-                2. Log of 2-D Haar wavelet transform
+                2. Known pixel values
                 <br>
                 <canvas id="canvas1"></canvas>
                 <br>
-                sigma: <input id="sigma_selector" type="range" id="sigma-selector" max="25" min="0" step="1" value="20"><span id="sigma_val" style="width: 20px; display: inline-block;">20</span>  
+                lambda: <input id="lambda_selector" type="range" id="lambda-selector" max="1" min="0.01" step="0.01" value="0.01"><span id="lambda_val" style="width: 20px; display: inline-block;">0.01</span>
+
+                <br>
+                IMAX: <input id="IMAX_selector" type="range" id="IMAX-selector" max="100" min="0" step="1" value="20"><span id="IMAX_val" style="width: 20px; display: inline-block;">20</span>                    
                 <br>    
-                lambda: <input id="lambda_selector" type="range" id="lambda-selector" max="25" min="0" step="1" value="20"><span id="lambda_val" style="width: 20px; display: inline-block;">20</span>                               
-                <!-- <input type="button" id="transform-btn" value="Compute 2D DFT"> -->
+                f: <input id="f_selector" type="range" id="f-selector" max="1" min="0" step="0.1" value="0.7"><span id="f_val" style="width: 20px; display: inline-block;">0.7</span>                               
+
             </div>
         </div>
         <br>
