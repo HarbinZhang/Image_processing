@@ -88,5 +88,5 @@ W(2:2:N,2:2:N)=(WLL1+ZLH1+ZHL1+ZHH1)/2;
 W(2:2:N,1:2:N)=(WLL1-ZLH1+ZHL1-ZHH1)/2;
 W(1:2:N,2:2:N)=(WLL1+ZLH1-ZHL1-ZHH1)/2;
 W(1:2:N,1:2:N)=(WLL1-ZLH1-ZHL1+ZHH1)/2;
-% figure,imagesc(Y),colormap(gray),axis off,title('Original image')
-% figure,imagesc(W),colormap(gray),axis off,title('Reconstructed image')
+figure,imagesc(Y),colormap(gray),axis off,title('Original image')
+figure,imagesc(W),colormap(gray),axis off,title('Reconstructed image')

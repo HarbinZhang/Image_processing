@@ -3,13 +3,13 @@
 %Image must be square with size a multiple of 8 (otherwise zero-pad).
 %XHAT=image. Z=wavelet of XHAT. W=inverse wavelet of Z.lambda=lambda in IST algorithm.
 clear;
-% X=imread('clown.jpg');
+X=imread('clown.jpg');
 % X=double(X);
-for i=1:256
-    X(1:256,i)=i;
-end
-lambda=0.01;
-IMAX=5;
+% for i=1:256
+%     X(1:256,i)=i;
+% end
+% lambda=0.01;
+% IMAX=5;
 f=1;%number of IST iterations and fraction of pixel values known.
 X=(X-min(min(X)))/(max(max(X))-min(min(X)));
 % figure,imagesc(X),colormap(gray),axis off,title('Original image')
