@@ -24,7 +24,7 @@ var FourierImageAnalysis = (function() {
       $('#omega_val').html(x+"%");
     });
 
-    loadImage('original.png');
+    loadImage('clown.png');
  
     $s('#transform-btn').addEventListener('click', function() {
       start = +new Date();

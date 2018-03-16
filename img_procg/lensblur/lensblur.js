@@ -218,16 +218,15 @@ function reconstructAction() {
 
 	console.log(FHre);
 
-	return;
 
 	FFT.fft2d(FYre, FYim);
 	FFT.fft2d(FHre, FHim);
 	
 
-	console.log("FYre: ", FYre);
-	console.log("FYim: ", FYim);
-	console.log("FHre: ", FHre);
-	console.log("FHim: ", FHim);
+	// console.log("FYre: ", FYre);
+	// console.log("FYim: ", FYim);
+	// console.log("FHre: ", FHre);
+	// console.log("FHim: ", FHim);
 
 
 
@@ -310,6 +309,8 @@ function reconstructAction() {
 	//   var idx = k*dims[0] + l;
 	//   return h_hats[idx];
 	// };
+
+
 
 	// // draw the pixels
 	var currImageData = ctxs[2].getImageData(
