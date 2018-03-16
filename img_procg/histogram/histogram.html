@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Rotate</title>
+
+        <script type="text/javascript" src="../lib/jquery-1.10.2.min.js"></script>
+        <script type="text/javascript" src="../lib/d3.v3.min.js"></script>
+        <script type="text/javascript" src="../lib/require.js"></script>
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+        <script src="../fft.js"></script>
+        <script src="../greyImage.js"></script>
+        <script src="../matlab.js"></script>
+        <script src="histogram.js"></script>
+    </head>
+    <body>
+        <h1>Rotate</h1>
+
+        <div>
+            <div style="display: inline-block; margin-right: 22px; vertical-align: top">
+                1. Original image
+                <br>
+                <canvas id="canvas0"></canvas>
+            </div>
+            <div style="display: inline-block; vertical-align: top" id="div_PX_histogram"></div>
+        </div>
+        <div>
+            <div style="display: inline-block; margin-right: 22px; vertical-align: top" id="div_FX_histogram"></div>
+            <div style="display: inline-block; vertical-align: top" id="div_FY_histogram"></div>
+        </div>
+        <div>
+            <div style="display: inline-block; margin-right: 22px; vertical-align: top" id="div_PY_histogram"></div>
+            <div style="display: inline-block; vertical-align: top">
+                2. Transformed Image
+                <br>
+                <canvas id="canvas1"></canvas>
+            </div>            
+            
+        </div>
+    </body>
+</html>

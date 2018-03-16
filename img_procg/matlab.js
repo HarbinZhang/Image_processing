@@ -1,3 +1,52 @@
+
+
+
+function reshape(X, N, M){
+    var res = [];
+    var index = 0;
+    for(var i = 0; i < N; i++){
+        var temp = [];
+        for(var j = 0; j < M; j++){
+            temp.push(X[index++]);
+        }
+        res.push(temp);
+    }
+    return transpose(res);
+}
+
+
+function cumsum(X){
+    var res = new Array(X.length);
+    res[0] = X[0];
+    for(var i = 1; i < X.length; i++){
+        res[i] = res[i-1] + X[i];
+    }
+    return res;
+}
+
+
+function hist(X){
+    var res = new Array(X.length);
+    res.fill(0);
+    for(var i = 0; i < X.length; i++){
+        if(X[i] < 0 || X[i] >= X.length)continue;
+        res[X[i]]++;
+    }
+    return res;
+}
+
+
+function linearize(X){
+    var res = [];
+    for(var i = 0; i < X[0].length; i++){
+        for(var j = 0; j < X.length; j++){
+            res.push(X[j][i]);
+        }
+    }
+    return res;
+}
+
+
 function matrix_max(X){
     var res = X[0][0];
     for(var i = 0; i < X.length; i++){
@@ -85,12 +134,15 @@ function zeroPad(X, M, N){
 
 
 function clamp(X){
-    var max = X[0];
-    for(var i = 0; i < X.length; i++){
-        max = Math.max(max, X[i]);
-    }
+    var max = matrix_max(X);
     var rate = 255/max;
     return X.map(x => Math.round(x * rate));
+}
+
+function matrix_clamp(X){
+    var max = matrix_max(X);
+    var rate = 255/max;
+    return X.map(row=>(row.map(x => Math.round(x * rate))));
 }
 
 
