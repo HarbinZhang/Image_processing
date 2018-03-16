@@ -1,5 +1,4 @@
 
-
 var dims = [-1, -1];
 var cc = 9e-3;
 
@@ -15,6 +14,7 @@ var greyImage;
 
 var Mu = 256;
 
+// init();
 window.onload = function(){
 	init();
 }
@@ -92,9 +92,47 @@ var loadImage = function(loc){
 function transformAction() {
 
 	var X = greyImage.getData();
-	var M = dims[0];
-	Mu = $('#T_selector').val();
-	Mu = 256*Math.pow(2,Mu-1);
+
+	// var X = [];
+	// for(var i = 1; i < 257; i++){
+	// 	var temp = [];
+	// 	for(var j = 1; j < 257; j++){
+	// 		temp.push(j);
+	// 	}
+	// 	X.push(temp);
+	// }
+	var N = X.length;
+	var M = X[0].length;
+	// var N = 256;
+	// var M = 256;
+
+	// console.log(X);
+	// return;
+
+	Mu = Math.round($('#T_selector').val());
+	// Mu = 256*Math.pow(2,Mu-1);
+	// var Mu = 300;
+
+	var FFT = require('/fft.js');
+	var ndarray = FFT.ndarray;
+	var ndfft = FFT.ndfft;
+
+	var FXre = ndarray(new Float64Array(linearize_horizontal(X)), [N, M]);
+	var FXim = ndarray(new Float64Array(N * M), [N, M]);
+
+	// console.log(FXre);
+	// console.log(FXre);
+
+	// Xim = new Array(256*256);
+	// Xim.fill(0);
+	ndfft(1, FXre, FXim);
+	// console.log(ndfft(1, FXre, FXim));
+	// console.log(FXre);
+	// console.log(FXim)
+
+	// console.log(X);
+	// return;
+
 
 	// FFT.init(dims[0]);
 
@@ -114,48 +152,37 @@ function transformAction() {
 
 	// console.log(what.re);
 
-	var FX = fft2d(X, M);
-	var FXre = FX.re;
-	var FXim = FX.im;
-
 
 	// FFT.fft2d(FXre, FXim);
 
+
+	var FYre = ndarray(new Float64Array(Mu * Mu), [Mu, Mu]);
+	var FYim = ndarray(new Float64Array(Mu * Mu), [Mu, Mu]);
 
 
 	var MU = [];
 	var MM = [];
 
-	var FYre = new Array(Mu*Mu);
-	var FYim = new Array(Mu*Mu);
-	FYre.fill(0);
-	FYim.fill(0);
-
-	// for(var i = 0; i < Mu; i++){
-	// 	FYre[i] = new Array(Mu);
-	// 	FYim[i] = new Array(Mu);
-	// }
-
-	// console.log(FYre);
-
-
-	if(Mu % 2 == 0){
-		for(var i = 0; i < (Mu+1)/2; i++){MU.push(i);}
+	if(M % 2 == 0){
+		for(var i = 0; i < (M-1)/2; i++){MU.push(i);}
 		for(var i = Mu+1-M/2; i < Mu; i++){MU.push(i);}
-		for(var i = 0; i < (Mu+1)/2; i++){MM.push(i);}
+		for(var i = 0; i < (M-1)/2; i++){MM.push(i);}
 		for(var i = M/2+1; i < M; i++){MM.push(i);}			
 
-		for(var i = 0; i < M; i ++){
-			var baseY = MU[i] * M;
-			var baseX = MM[i] * M;
-			for(var j = 0; j < M; j ++){
-				FYre[baseY + MU[j]] = FXre[baseX + j]*Mu/M;
-				FYim[baseY + MU[j]] = FXim[baseX + j]*Mu/M;
+		for(var i = 0; i < MM.length; i ++){
+			// var baseY = MU[i] * M;
+			// var baseX = MM[i] * M;
+			for(var j = 0; j < MM.length; j ++){
+				// FYre[baseY + MU[j]] = FXre[baseX + j]*Mu/M;
+				// FYim[baseY + MU[j]] = FXim[baseX + j]*Mu/M;
+				FYre.set(MU[i],MU[j],FXre.get(MM[i],MM[j])*Mu/M);
+				FYim.set(MU[i],MU[j],FXim.get(MM[i],MM[j])*Mu/M);
 			}
 		}
 
 
-	}else{
+	}
+	else{
 
 
 		for(var i = 0; i < M/2; i++){MU.push(i);}
@@ -163,23 +190,41 @@ function transformAction() {
 
 
 		for(var i = 0; i < M; i ++){
-			var baseY = MU[i] * M;
-			var baseX = i * M;
+			// var baseY = MU[i] * M;
+			// var baseX = i * M;
 			for(var j = 0; j < M; j ++){
-				FYre[baseY + MU[j]] = FXre[baseX + j]*Mu/M;
-				FYim[baseY + MU[j]] = FXim[baseX + j]*Mu/M;
+				// FYre[baseY + MU[j]] = FXre[baseX + j]*Mu/M;
+				// FYim[baseY + MU[j]] = FXim[baseX + j]*Mu/M;
+				FYre.set(MU[i],MU[j],FXre.get(MM[i],MM[j])*Mu/M);
+				FYim.set(MU[i],MU[j],FXim.get(MM[i],MM[j])*Mu/M);
 			}
 		}
 
 	}
 
+	// console.log(MU);
+	// console.log(MM);
+	// console.log(FYre);
+	// console.log(FYim);
+	// return;
 
 
+	ndfft(-1, FYre, FYim);
 
 
-	var UpSampled = ifft2d(FYre, FYim, Mu);
-	UpSampled = clamp(UpSampled);
-	console.log(UpSampled);
+	// FYre = clamp(FYre);
+
+	// var UpSampled = ifft2d(FYre, FYim, Mu);
+	// UpSampled = clamp(UpSampled);
+	// console.log(FYre);
+	var Y = FYre.data;
+	// console.log(sumY);
+	var maxY = 0;
+	for(var it in Y){maxY = Math.max(Y[it], maxY); }
+	var rate = 255 / maxY;
+	Y = Y.map(it => Math.round(it * rate) );
+	console.log(Y);
+
 
 	// FFT.ifft2d(what.re, what.im);
 
@@ -198,12 +243,13 @@ function transformAction() {
     // var rate = dims[0] / Mu;
     for (var k = 0; k < Mu; k++) {
       for (var l = 0; l < Mu; l++) {
-        var idxInPixels = 4*(dims[0]*k + l);
+        var idxInPixels = 4*(Mu*k + l);
         currImageData.data[idxInPixels+3] = 255; // full alpha
+        var base = l * Mu;
         // RGB are the same -> gray
         for (var c = 0; c < 3; c++) { // lol c++
           // currImageData.data[idxInPixels+c] = UpSampled[Math.round(k*rate) * Mu + Math.round(l*rate)];
-          currImageData.data[idxInPixels+c] = UpSampled[k*dims[1] + l];
+          currImageData.data[idxInPixels+c] = Y[base + k];
           // currImageData.data[idxInPixels+c] = what.re[k*M + l];
         }
       }

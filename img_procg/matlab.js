@@ -36,7 +36,7 @@ function hist(X){
 }
 
 
-function linearize(X){
+function linearize_vertical(X){
     var res = [];
     for(var i = 0; i < X[0].length; i++){
         for(var j = 0; j < X.length; j++){
@@ -45,6 +45,17 @@ function linearize(X){
     }
     return res;
 }
+
+function linearize_horizontal(X){
+    var res = [];
+    for(var i = 0; i < X[0].length; i++){
+        for(var j = 0; j < X.length; j++){
+            res.push(X[j][i]);
+        }
+    }
+    return res;
+}
+
 
 
 function matrix_max(X){

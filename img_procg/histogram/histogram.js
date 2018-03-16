@@ -118,7 +118,7 @@ function transformAction() {
 
 
 	// t = t.map(function(item, index){return [item, index];})
-	var X_lin = linearize(X);
+	var X_lin = linearize_vertical(X);
 	PX = hist(X_lin);
 	var PX_show = PX.map(function(item, index){return [index, item];} );
 	PX_show.unshift(['x','value']);
