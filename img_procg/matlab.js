@@ -29,8 +29,8 @@ function hist(X){
     var res = new Array(X.length);
     res.fill(0);
     for(var i = 0; i < X.length; i++){
-        if(X[i] < 0 || X[i] >= X.length)continue;
-        res[X[i]]++;
+        if(X[i] <= 0 || X[i] > X.length)continue;
+        res[X[i]-1]++;
     }
     return res;
 }

@@ -120,9 +120,13 @@ function transformAction() {
 	// t = t.map(function(item, index){return [item, index];})
 	var X_lin = linearize_vertical(X);
 	PX = hist(X_lin);
-	var PX_show = PX.map(function(item, index){return [index, item];} );
-	PX_show.unshift(['x','value']);
+	// console.log(PX);
+	// return;
+	var PX_show = shrink(PX);
+	var PX_show = PX_show.map(function(item, index){return [index, item];} );
 
+	PX_show.unshift(['x','value']);
+	// console.log(PX_show);
 	google.charts.setOnLoadCallback(drawPX);
 	// google.charts.setOnLoadCallback(drawChart(PX_show, 'Histogram of original image', 'chart_div'));
 
@@ -141,7 +145,9 @@ function transformAction() {
 	}
 	// console.log(Y);
 
-	var FX_show = FX.map(function(item, index){return [index, item];} );
+	var FX_show = shrink(FX);
+
+	FX_show = FX_show.map(function(item, index){return [index, item];} );
 	FX_show.unshift(['fx','value']);
 	google.charts.setOnLoadCallback(drawFX);
 
@@ -149,14 +155,16 @@ function transformAction() {
 	var FY = cumsum(PY);
 	FY.unshift(0);
 
-	var FY_show = FY.map(function(item, index){return [index, item];} );
+	var FY_show = shrink(FY);
+	FY_show = FY_show.map(function(item, index){return [index, item];} );
 	FY_show.unshift(['fy','value']);
 	google.charts.setOnLoadCallback(drawFY);
 
-	var PY_show = PY.map(function(item, index){return [index, item];} );
+	var PY_show = shrink(PY);
+	PY_show = PY_show.map(function(item, index){return [index, item];} );
 	PY_show.unshift(['py','value']);
 	google.charts.setOnLoadCallback(drawPY);
-	// console.log(FY);
+	console.log(PY_show);
 
 	function drawPX() {
 		// Create the data table.
@@ -261,7 +269,22 @@ function transformAction() {
 }
 
 
+function shrink(X){
+	var res = [];
+	var index = 0;
+	while(index < X.length - 63){
+		var temp = 0;
+		for(var i = 0; i < 64; i++){
+			temp += X[index];
+			if(index < X.length - 1){index++;}
+		}
+		temp = Math.round(temp / 64);
+		res.push(temp);
+	}
+	res[0] = res[0] / 10;
+	return res;
 
+}
 
 function $s(id) {
 	if (id.charAt(0) !== '#') return false;
