@@ -52,7 +52,7 @@ var loadImage = function(loc1, loc2, loc3){
 		ctxs[2].drawImage(img2, 0, 0, img.width, img.height);
 
 	});
-	img2.crossOrigin = "anonymous";
+	img2.crossOrigin = "anonymous"; 
 	img2.src = loc2;
 
 	var img3 = new Image();
